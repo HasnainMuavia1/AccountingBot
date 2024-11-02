@@ -221,97 +221,103 @@
 <div class="container-fluid py-4">
     <!-- Top Row Containers -->
     <div class="row g-4 mb-4">
-        <!-- Params Container -->
+        <!-- Params Main Container -->
         <div class="col-md-4">
-            <div class="custom-container">
+            <form action="" id="main-rag" method="post">
+                <div class="custom-container">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold m-0">Main RAG</h4>
-                    <button class="save-button">
+                    <button class="save-button" type="submit">
                         <i class="fas fa-save"></i>
                         <span>Save</span>
                     </button>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Input Text (English)</label>
-                    <input type="text" class="form-control" placeholder="Enter text in English">
+                    <input type="text" id="eng-input-rag" class="form-control" placeholder="Enter text in English">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Input Text (German)</label>
-                    <input type="text" class="form-control" placeholder="Text auf Deutsch eingeben">
+                    <input type="text" id="german-input-rag"  class="form-control" placeholder="Text auf Deutsch eingeben">
                 </div>
                 <div class="slider-container">
                     <label class="form-label">Value One</label>
                     <span class="slider-value">1.0</span>
-                    <input type="range" class="slider" min="0" max="2" step="0.1" value="1.0">
+                    <input type="range" id="range-temp-rag"  class="slider" min="0" max="2" step="0.1" value="1.0">
                 </div>
                 <div class="slider-container">
                     <label class="form-label">Value Two</label>
                     <span class="slider-value">1000</span>
-                    <input type="range" class="slider" min="0" max="2000" step="100" value="1000">
+                    <input type="range" id="range-tokens-rag" class="slider" min="0" max="2000" step="100" value="1000">
                 </div>
             </div>
+            </form>
         </div>
+    
         <!-- Accounting Container -->
         <div class="col-md-4">
-            <div class="custom-container">
+            <form action="" id="accounting-form" method="post">
+                <div class="custom-container">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold m-0">Accounting</h4>
-                    <button class="save-button">
+                    <button class="save-button" type="submit">
                         <i class="fas fa-save"></i>
                         <span>Save</span>
                     </button>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Input Text (English)</label>
-                    <input type="text" class="form-control" placeholder="Enter text in English">
+                    <input type="text" id="eng-input-accounting" class="form-control" placeholder="Enter text in English">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Input Text (German)</label>
-                    <input type="text" class="form-control" placeholder="Text auf Deutsch eingeben">
+                    <input type="text" id="german-input-accounting"  class="form-control" placeholder="Text auf Deutsch eingeben">
                 </div>
                 <div class="slider-container">
                     <label class="form-label">Value One</label>
                     <span class="slider-value">1.0</span>
-                    <input type="range" class="slider" min="0" max="2" step="0.1" value="1.0">
+                    <input type="range" id="range-temp-accounting"  class="slider" min="0" max="2" step="0.1" value="1.0">
                 </div>
                 <div class="slider-container">
                     <label class="form-label">Value Two</label>
                     <span class="slider-value">1000</span>
-                    <input type="range" class="slider" min="0" max="2000" step="100" value="1000">
+                    <input type="range" id="range-tokens-accounting" class="slider" min="0" max="2000" step="100" value="1000">
                 </div>
             </div>
+            </form>
         </div>
 <!-- Tax Container -->
         <div class="col-md-4">
-            <div class="custom-container">
+            <form action="" id="tax-form" method="post">
+                <div class="custom-container">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold m-0">Tax</h4>
-                    <button class="save-button">
+                    <button class="save-button" type="submit">
                         <i class="fas fa-save"></i>
                         <span>Save</span>
                     </button>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Input Text (English)</label>
-                    <input type="text" class="form-control" placeholder="Enter text in English">
+                    <input type="text" id="eng-input-tax" class="form-control" placeholder="Enter text in English">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Input Text (German)</label>
-                    <input type="text" class="form-control" placeholder="Text auf Deutsch eingeben">
+                    <input type="text" id="german-input-tax"  class="form-control" placeholder="Text auf Deutsch eingeben">
                 </div>
                 <div class="slider-container">
                     <label class="form-label">Value One</label>
                     <span class="slider-value">1.0</span>
-                    <input type="range" class="slider" min="0" max="2" step="0.1" value="1.0">
+                    <input type="range" id="range-temp-tax"  class="slider" min="0" max="2" step="0.1" value="1.0">
                 </div>
                 <div class="slider-container">
                     <label class="form-label">Value Two</label>
                     <span class="slider-value">1000</span>
-                    <input type="range" class="slider" min="0" max="2000" step="100" value="1000">
+                    <input type="range" id="range-tokens-tax" class="slider" min="0" max="2000" step="100" value="1000">
                 </div>
             </div>
+            </form>
         </div>
-
 
         <!-- Similar structure for Accounting and Taxes containers -->
         <!-- ... (omitted for brevity but follows same structure with different values) ... -->
@@ -409,7 +415,37 @@
         });
     }
 
-    // Form submission
+    // Form submission of chat bot
+    document.getElementById('chat-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+
+        if (message) {
+            appendMessage(message, true);
+            input.value = '';
+            input.style.height = 'auto';
+            sendButton.classList.remove('active');
+
+            // AJAX call to backend
+            $.ajax({
+                url: '{% url "index" %}',
+                method: 'POST',
+                data: {
+                    'query': message,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    appendMessage(response.message, false);
+                },
+                error: function(error) {
+                    appendMessage("Sorry, there was an error processing your request.", false);
+                }
+            });
+        }
+    });
+    // Form submission of chat bot
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
 
