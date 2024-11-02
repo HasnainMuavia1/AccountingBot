@@ -231,6 +231,7 @@
                         <i class="fas fa-save"></i>
                         <span>Save</span>
                     </button>
+                    <p id="Error_rag"></p>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Input Text (English)</label>
@@ -415,36 +416,99 @@
         });
     }
 
-    // Form submission of chat bot
-    document.getElementById('chat-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Function to send data from Main RAG form
+function sendMainRagData() {
+    const rag_input_english = document.getElementById('eng-input-rag').value;
+    const rag_input_german = document.getElementById('german-input-rag').value;
+    const rag_range_temp = document.getElementById('range-temp-rag').value;
+    const rag_range_tokens = document.getElementById('range-tokens-rag').value;
 
-        const input = document.getElementById('chat-input');
-        const message = input.value.trim();
-
-        if (message) {
-            appendMessage(message, true);
-            input.value = '';
-            input.style.height = 'auto';
-            sendButton.classList.remove('active');
-
-            // AJAX call to backend
-            $.ajax({
-                url: '{% url "index" %}',
-                method: 'POST',
-                data: {
-                    'query': message,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    appendMessage(response.message, false);
-                },
-                error: function(error) {
-                    appendMessage("Sorry, there was an error processing your request.", false);
-                }
-            });
+    $.ajax({
+        url: '{% url "main_rag" %}',
+        method: 'POST',
+        data: {
+            'rag_input_english': rag_input_english,
+            'rag_input_german': rag_input_german,
+            'rag_range_temp': rag_range_temp,
+            'rag_range_tokens': rag_range_tokens,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            document.getElementById('Error_rag').innerText = 'Successfully saved Main RAG data';
+        },
+        error: function(xhr) {
+            document.getElementById('Error_rag').innerText = 'Error saving Main RAG data: ' + xhr.statusText;
         }
     });
+}
+
+// Function to send data from Accounting form
+function sendAccountingData() {
+    const accounting_input_english = document.getElementById('eng-input-accounting').value;
+    const accounting_input_german = document.getElementById('german-input-accounting').value;
+    const accounting_range_temp = document.getElementById('range-temp-accounting').value;
+    const accounting_range_tokens = document.getElementById('range-tokens-accounting').value;
+
+    $.ajax({
+        url: '{% url "accounting" %}',
+        method: 'POST',
+        data: {
+            'accounting_input_english': accounting_input_english,
+            'accounting_input_german': accounting_input_german,
+            'accounting_range_temp': accounting_range_temp,
+            'accounting_range_tokens': accounting_range_tokens,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            document.getElementById('Error_accounting').innerText = 'Successfully saved Accounting data';
+        },
+        error: function(xhr) {
+            document.getElementById('Error_accounting').innerText = 'Error saving Accounting data: ' + xhr.statusText;
+        }
+    });
+}
+
+// Function to send data from Tax form
+function sendTaxData() {
+    const tax_input_english = document.getElementById('eng-input-tax').value;
+    const tax_input_german = document.getElementById('german-input-tax').value;
+    const tax_range_temp = document.getElementById('range-temp-tax').value;
+    const tax_range_tokens = document.getElementById('range-tokens-tax').value;
+
+    $.ajax({
+        url: '{% url "tax" %}',
+        method: 'POST',
+        data: {
+            'tax_input_english': tax_input_english,
+            'tax_input_german': tax_input_german,
+            'tax_range_temp': tax_range_temp,
+            'tax_range_tokens': tax_range_tokens,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            document.getElementById('Error_tax').innerText = 'Successfully saved Tax data';
+        },
+        error: function(xhr) {
+            document.getElementById('Error_tax').innerText = 'Error saving Tax data: ' + xhr.statusText;
+        }
+    });
+}
+
+document.getElementById('main-rag').addEventListener('submit', function(e) {
+    e.preventDefault();
+    sendMainRagData();
+});
+
+document.getElementById('accounting-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    sendAccountingData();
+});
+
+document.getElementById('tax-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    sendTaxData();
+});
+
     // Form submission of chat bot
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
