@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+import uuid
 urlpatterns = [
-    path('',views.index,name='index'),
+    path('', views.index, name='index'),  # Homepage at root URL
+    path('chat/<uuid:session_id>/', views.index, name='chat_session'),
     path('upload/',views.upload,name='upload'),
     path('Dashboard/',views.Dashboard,name='Dashboard'),
 ]

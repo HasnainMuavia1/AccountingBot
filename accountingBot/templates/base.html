@@ -197,42 +197,42 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg custom-navbar fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-brain me-2"></i>
-                <span style="font-size: 1.8rem">RAGBot</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="fas fa-home nav-icon"></i>Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/services">
-                            <i class="fas fa-cogs nav-icon"></i>Services
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">
-                            <i class="fas fa-info-circle nav-icon"></i>About
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">
-                            <i class="fas fa-envelope nav-icon"></i>Contact
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+{#    <!-- Navbar -->#}
+{#    <nav class="navbar navbar-expand-lg custom-navbar fixed-top">#}
+{#        <div class="container">#}
+{#            <a class="navbar-brand" href="/">#}
+{#                <i class="fas fa-brain me-2"></i>#}
+{#                <span style="font-size: 1.8rem">RAGBot</span>#}
+{#            </a>#}
+{#            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">#}
+{#                <i class="fas fa-bars"></i>#}
+{#            </button>#}
+{#            <div class="collapse navbar-collapse" id="navbarNav">#}
+{#                <ul class="navbar-nav ms-auto">#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="/">#}
+{#                            <i class="fas fa-home nav-icon"></i>Home#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="/services">#}
+{#                            <i class="fas fa-cogs nav-icon"></i>Services#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="/about">#}
+{#                            <i class="fas fa-info-circle nav-icon"></i>About#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="/contact">#}
+{#                            <i class="fas fa-envelope nav-icon"></i>Contact#}
+{#                        </a>#}
+{#                    </li>#}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
+{#    </nav>#}
 
     <!-- Main Content -->
     <main>
@@ -240,49 +240,49 @@
         {% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 footer-section">
-                    <h3 class="footer-title">About RagBOT</h3>
-                    <p class="text-secondary">Lorem ipsum lorem ipsum loremm ipsum lorem ipsum Lorem ipsum lorem ipsum loremm ipsum lorem ipsum Lorem ipsum lorem ipsum loremm ipsum lorem ipsum</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link" title="GitHub">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="#" class="social-link" title="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="social-link" title="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 footer-section">
-                    <h3 class="footer-title">Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="/services"><i class="fas fa-chevron-right"></i>Services</a></li>
-                        <li><a href="/privacy"><i class="fas fa-chevron-right"></i>Privacy</a></li>
-                        <li><a href="/terms"><i class="fas fa-chevron-right"></i>Terms</a></li>
-                        <li><a href="/faq"><i class="fas fa-chevron-right"></i>FAQ</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4 col-md-6 footer-section">
-                    <h3 class="footer-title">Contact</h3>
-                    <ul class="footer-links">
-                        <li><a href="mailto:contact@eduai.com"><i class="fas fa-envelope"></i>Your Business Email</a></li>
-                        <li><a href="tel:+1234567890"><i class="fas fa-phone"></i>+1234567890</a></li>
-                        <li><a href="#"><i class="fas fa-map-marker-alt"></i>Pakistan Lahore</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>Made with <i class="fas fa-heart heart-icon"></i> by Hasnain Muavia</p>
-                <p class="mt-1">&copy; {% now "Y" %} lorem ipsum ll rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+{#    <!-- Footer -->#}
+{#    <footer class="footer">#}
+{#        <div class="container">#}
+{#            <div class="row">#}
+{#                <div class="col-lg-4 col-md-6 footer-section">#}
+{#                    <h3 class="footer-title">About RagBOT</h3>#}
+{#                    <p class="text-secondary">Lorem ipsum lorem ipsum loremm ipsum lorem ipsum Lorem ipsum lorem ipsum loremm ipsum lorem ipsum Lorem ipsum lorem ipsum loremm ipsum lorem ipsum</p>#}
+{#                    <div class="social-links">#}
+{#                        <a href="#" class="social-link" title="GitHub">#}
+{#                            <i class="fab fa-github"></i>#}
+{#                        </a>#}
+{#                        <a href="#" class="social-link" title="LinkedIn">#}
+{#                            <i class="fab fa-linkedin-in"></i>#}
+{#                        </a>#}
+{#                        <a href="#" class="social-link" title="Twitter">#}
+{#                            <i class="fab fa-twitter"></i>#}
+{#                        </a>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6 footer-section">#}
+{#                    <h3 class="footer-title">Quick Links</h3>#}
+{#                    <ul class="footer-links">#}
+{#                        <li><a href="/services"><i class="fas fa-chevron-right"></i>Services</a></li>#}
+{#                        <li><a href="/privacy"><i class="fas fa-chevron-right"></i>Privacy</a></li>#}
+{#                        <li><a href="/terms"><i class="fas fa-chevron-right"></i>Terms</a></li>#}
+{#                        <li><a href="/faq"><i class="fas fa-chevron-right"></i>FAQ</a></li>#}
+{#                    </ul>#}
+{#                </div>#}
+{#                <div class="col-lg-4 col-md-6 footer-section">#}
+{#                    <h3 class="footer-title">Contact</h3>#}
+{#                    <ul class="footer-links">#}
+{#                        <li><a href="mailto:contact@eduai.com"><i class="fas fa-envelope"></i>Your Business Email</a></li>#}
+{#                        <li><a href="tel:+1234567890"><i class="fas fa-phone"></i>+1234567890</a></li>#}
+{#                        <li><a href="#"><i class="fas fa-map-marker-alt"></i>Pakistan Lahore</a></li>#}
+{#                    </ul>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="footer-bottom">#}
+{#                <p>Made with <i class="fas fa-heart heart-icon"></i> by Hasnain Muavia</p>#}
+{#                <p class="mt-1">&copy; {% now "Y" %} lorem ipsum ll rights reserved.</p>#}
+{#            </div>#}
+{#        </div>#}
+{#    </footer>#}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
