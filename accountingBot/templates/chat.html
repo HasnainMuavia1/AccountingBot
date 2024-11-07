@@ -318,6 +318,37 @@
                 max-width: 90%;
             }
         }
+        /* Sidebar styling */
+
+
+/* New Chat Button styling */
+.new-chat-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.new-chat-btn {
+    display: flex;
+    align-items: center;
+    background-color: #2c6dff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.new-chat-btn i {
+    margin-right: 8px; /* Spacing between icon and text */
+}
+
+.new-chat-btn:hover {
+    background-color: #1f5acc; /* Darken color on hover */
+}
     </style>
 </head>
 <body>
@@ -327,17 +358,18 @@
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h4 class="mb-4 mt-2 ms-5">AccountingBot</h4>
-        <!-- Add your sidebar content here -->
-        <ul class="list-unstyled">
-            <li class="mb-3"><a href="#" class="text-decoration-none text-dark">Dashboard</a></li>
+   <!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <h4 class="mb-4 mt-1 ms-5">AccountingBot</h4>
 
-            <li class="mb-3"><a href="#" class="text-decoration-none text-dark">Settings</a></li>
-            <li class="mb-3"><a href="#" class="text-decoration-none text-dark">Profile</a></li>
-        </ul>
+    <!-- New Chat Button -->
+    <div class="new-chat-container ms-5">
+        <button class="new-chat-btn" onclick="startNewChat()">
+            <i class="fas fa-robot"></i> New Chat
+        </button>
     </div>
+</div>
+
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
