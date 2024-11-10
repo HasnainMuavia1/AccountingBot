@@ -1,10 +1,12 @@
+import json
 import os
 import uuid
 
 from django.conf import settings
 from django.core.files.storage import default_storage
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.groq import Groq
@@ -36,19 +38,29 @@ def generate_prompt(chat_query):
     # Construct the response message
     if is_german_query:
         response_message = (
-            f"Du bist ein Buchhaltungsassistent. Wenn die Anfrage nur ein Gruß wie 'Hallo' ist, antworte freundlich, aber gib keine zusätzlichen Informationen. "
-            f"Falls eine kurze Antwort gewünscht ist, gib eine prägnante Antwort basierend auf den Dokumentinhalten. "
-            f"Für alle anderen Fragen beantworte die folgende Frage in einem klaren und strukturierten Format: "
-            f"Verwende '###' nur für Überschriften, nummerierte Schritte (z.B., '1.', '2.') nur für Anweisungen, und '-' für zusätzliche Details oder optionale Informationen. "
-            f"Verwende keine zusätzlichen Symbole oder Formatierungen, die nicht ausdrücklich gewünscht sind. {chat_query}"
+            f"Du bist ein Buchhaltungsassistent. Befolge die folgenden Regeln, um Anfragen passend zu beantworten:\n"
+            f"1. **Falls die Anfrage ein einfacher Gruß ist (z.B. 'Hallo'):** Antworte höflich, ohne zusätzliche Informationen oder Details hinzuzufügen.\n"
+            f"2. **Falls eine kurze Antwort angefragt wird:** Gib eine prägnante Antwort, die sich direkt auf die Inhalte des Dokuments bezieht.\n"
+            f"3. **Für alle anderen Anfragen:** Strukturiere die Antwort klar und verständlich:\n"
+            f"   - Verwende '###' nur für Hauptüberschriften.\n"
+            f"   - Verwende '**' nur für Zwischenüberschriften.\n"
+            f"   - Nutze nummerierte Schritte (z.B. '1.', '2.') nur für klar definierte Anweisungen.\n"
+            f"   - Verwende '-' für zusätzliche Details oder optionale Informationen.\n"
+            f"   - Vermeide jegliche Symbole oder Formatierungen, die nicht ausdrücklich angefragt wurden.\n\n"
+            f"Hier ist die Antwort auf die Anfrage: {chat_query}"
         )
     else:
         response_message = (
-            f"You are an accounting assistant. If the query is just a greeting like 'hello,' respond politely but do not provide additional information. "
-            f"If a brief answer is requested, provide a concise response based on document content. "
-            f"For all other queries, answer the following question in a clear and structured format: "
-            f"Use '###' only for headings, numbered steps (e.g., '1.', '2.') only for instructions, and '-' for any additional details or optional information. "
-            f"Avoid extra symbols or formatting beyond what is specified. {chat_query}"
+            f"You are an accounting assistant. Follow these rules to respond appropriately:\n"
+            f"1. **If the query is a simple greeting (e.g., 'hello'):** Respond politely without adding extra information or details.\n"
+            f"2. **If a brief response is requested:** Provide a concise answer directly based on the document content.\n"
+            f"3. **For all other queries:** Structure the response in a clear and readable format:\n"
+            f"   - Use '###' only for main headings.\n"
+            f"   - Use '**' only for subheadings.\n"
+            f"   - Use numbered steps (e.g., '1.', '2.') only for specific instructions.\n"
+            f"   - Use '-' for any additional details or optional information.\n"
+            f"   - Avoid any extra symbols or formatting that hasn’t been explicitly requested.\n\n"
+            f"Here is the response to the query: {chat_query}"
         )
 
     # Query the engine
@@ -61,27 +73,72 @@ def index(request, session_id=None):
     if request.method == 'POST':
         chat_query = request.POST.get('query')
 
-        # Check if session_id exists; if not, create one
+        # For new chats (no session_id)
         if session_id is None:
-            # Generate a new UUID for the session
             session_id = uuid.uuid4()
-            # Return new session_id in the response
             response_text = generate_prompt(chat_query)
             generate_session_id(chat_query, session_id)
             save_chat_history_in_database(session_id, chat_query, response_text)
-            return JsonResponse({'new_session_id': str(session_id), 'message': response_text, 'status': 'success'})
+            return JsonResponse({
+                'new_session_id': str(session_id),
+                'message': response_text,
+                'status': 'success'
+            })
 
-        # Process the query with the existing session_id
+        # For existing chats
         try:
             response_text = generate_prompt(chat_query)
             save_chat_history_in_database(session_id, chat_query, response_text)
-            return JsonResponse({'message': response_text, 'status': 'success'})
-
+            return JsonResponse({
+                'message': response_text,
+                'status': 'success'
+            })
         except Exception as e:
-            return JsonResponse({'message': str(e), 'status': 'error'})
+            return JsonResponse({
+                'message': str(e),
+                'status': 'error'
+            })
 
-    # Render the chat page with the session_id (if any)
-    return render(request, 'chat.html', {'session_id': session_id})
+    # GET request with session_id (loading specific chat)
+    elif request.method == 'GET' and session_id:
+        chat_messages = specific_chat_history_object(session_id)
+        if chat_messages == 'failed':
+            return JsonResponse({'error': 'Chat not found'}, status=404)
+
+        return render(request, 'chat.html', {
+            'session_id': session_id,
+            'chat_messages': json.dumps(chat_messages),
+            'sidebar_chats': ChatSession.objects.all().order_by('-created_at')
+        })
+
+    # Initial page load
+    return render(request, 'chat.html', {
+        'sidebar_chats': ChatSession.objects.all().order_by('-created_at')
+    })
+
+
+def new_session(request):
+    return render(request, 'chat.html', {
+        'sidebar_chats': ChatSession.objects.all().order_by('-created_at')
+    })
+
+
+def specific_chat_history_object(session_id):
+    try:
+        chat_history = ChatHistory.objects.filter(session__session_id=session_id)
+        chat_messages = list(chat_history.values('message_user', 'message_bot'))
+        return chat_messages
+    except Exception as e:
+        return 'failed'
+
+
+def chat_history_all_objects(request, session_id):
+    try:
+        chat_history = ChatHistory.objects.filter(session__session_id=session_id)
+        chat_messages = list(chat_history.values('message_user', 'message_bot'))
+        return JsonResponse(chat_messages, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 def upload(request):
@@ -142,15 +199,20 @@ def save_chat_history_in_database(session_id, message_user, message_bot):
 
 
 def generate_title_of_the_chat(user_chat):
+    # Define the message prompt more explicitly to guide concise title generation.
     chat_completion = client.chat.completions.create(
         messages=[
             {
                 "role": "system",
-                "content": "Given a user message or chat history, create a brief and descriptive 2-3 word title "
-                           "summarizing the main topic or intent. Titles should be concise, capturing the essence of "
-                           "the conversation."
+                "content": (
+                    "Given a user message or chat history, create a brief and descriptive 2-3 word title "
+                    "summarizing the main topic or intent. Keep the title concise and meaningful, capturing "
+                    "the core theme or purpose of the conversation. "
+                    "If the user message is unclear or includes mistakes, still generate a 2-3 word title that reflects "
+                    "the best interpretation of the topic. If the message is purely a greeting, such as 'Hello' or 'Hi,' "
+                    "respond with 'Greeting' as the title."
+                )
             },
-            # Set a user message for the assistant to respond to.
             {
                 "role": "user",
                 "content": f"{user_chat}",
@@ -158,10 +220,21 @@ def generate_title_of_the_chat(user_chat):
         ],
         model="llama3-8b-8192",
         temperature=0.3,
-        max_tokens=50,
+        max_tokens=10,
         top_p=1,
         stop=None,
-
         stream=False,
     )
-    return chat_completion.choices[0].message.content
+
+    # Get and clean the generated title.
+    title = chat_completion.choices[0].message.content.strip()
+
+    # Validate and ensure the title is concise and avoids greeting or overly long responses.
+    if len(title.split()) > 3:
+        title = ' '.join(title.split()[:3])  # Limit to 2-3 words if the generated title is too long
+
+    # Handle titles that might be inappropriate or if only a greeting was detected.
+    if "greeting" in title.lower() or title.lower() in ["hello", "hi", "greetings"]:
+        title = "Greeting"
+
+    return title

@@ -20,6 +20,10 @@ import uuid
 urlpatterns = [
     path('', views.index, name='index'),  # Homepage at root URL
     path('chat/<uuid:session_id>/', views.index, name='chat_session'),
+    path('chat/<uuid:session_id>/history/', views.chat_history_all_objects, name='chat_history'),
+    path('newsession/', views.new_session, name='new_session'),
     path('upload/',views.upload,name='upload'),
     path('Dashboard/',views.Dashboard,name='Dashboard'),
+
+
 ]
