@@ -254,74 +254,6 @@
             </div>
             </form>
         </div>
-    
-        <!-- Accounting Container -->
-        <div class="col-md-4">
-            <form action="" id="accounting-form" method="post">
-                <div class="custom-container">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold m-0">Accounting</h4>
-                    <button class="save-button" type="submit">
-                        <i class="fas fa-save"></i>
-                        <span>Save</span>
-                    </button>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Input Text (English)</label>
-                    <input type="text" id="eng-input-accounting" class="form-control" placeholder="Enter text in English">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Input Text (German)</label>
-                    <input type="text" id="german-input-accounting"  class="form-control" placeholder="Text auf Deutsch eingeben">
-                </div>
-                <div class="slider-container">
-                    <label class="form-label">Value One</label>
-                    <span class="slider-value">1.0</span>
-                    <input type="range" id="range-temp-accounting"  class="slider" min="0" max="2" step="0.1" value="1.0">
-                </div>
-                <div class="slider-container">
-                    <label class="form-label">Value Two</label>
-                    <span class="slider-value">1000</span>
-                    <input type="range" id="range-tokens-accounting" class="slider" min="0" max="2000" step="100" value="1000">
-                </div>
-            </div>
-            </form>
-        </div>
-<!-- Tax Container -->
-        <div class="col-md-4">
-            <form action="" id="tax-form" method="post">
-                <div class="custom-container">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold m-0">Tax</h4>
-                    <button class="save-button" type="submit">
-                        <i class="fas fa-save"></i>
-                        <span>Save</span>
-                    </button>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Input Text (English)</label>
-                    <input type="text" id="eng-input-tax" class="form-control" placeholder="Enter text in English">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Input Text (German)</label>
-                    <input type="text" id="german-input-tax"  class="form-control" placeholder="Text auf Deutsch eingeben">
-                </div>
-                <div class="slider-container">
-                    <label class="form-label">Value One</label>
-                    <span class="slider-value">1.0</span>
-                    <input type="range" id="range-temp-tax"  class="slider" min="0" max="2" step="0.1" value="1.0">
-                </div>
-                <div class="slider-container">
-                    <label class="form-label">Value Two</label>
-                    <span class="slider-value">1000</span>
-                    <input type="range" id="range-tokens-tax" class="slider" min="0" max="2000" step="100" value="1000">
-                </div>
-            </div>
-            </form>
-        </div>
-
-        <!-- Similar structure for Accounting and Taxes containers -->
-        <!-- ... (omitted for brevity but follows same structure with different values) ... -->
     </div>
 
     <!-- Chat Container -->
@@ -442,72 +374,13 @@ function sendMainRagData() {
     });
 }
 
-// Function to send data from Accounting form
-function sendAccountingData() {
-    const accounting_input_english = document.getElementById('eng-input-accounting').value;
-    const accounting_input_german = document.getElementById('german-input-accounting').value;
-    const accounting_range_temp = document.getElementById('range-temp-accounting').value;
-    const accounting_range_tokens = document.getElementById('range-tokens-accounting').value;
-
-    $.ajax({
-        url: '{% url "accounting" %}',
-        method: 'POST',
-        data: {
-            'accounting_input_english': accounting_input_english,
-            'accounting_input_german': accounting_input_german,
-            'accounting_range_temp': accounting_range_temp,
-            'accounting_range_tokens': accounting_range_tokens,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        success: function(response) {
-            document.getElementById('Error_accounting').innerText = 'Successfully saved Accounting data';
-        },
-        error: function(xhr) {
-            document.getElementById('Error_accounting').innerText = 'Error saving Accounting data: ' + xhr.statusText;
-        }
-    });
-}
-
-// Function to send data from Tax form
-function sendTaxData() {
-    const tax_input_english = document.getElementById('eng-input-tax').value;
-    const tax_input_german = document.getElementById('german-input-tax').value;
-    const tax_range_temp = document.getElementById('range-temp-tax').value;
-    const tax_range_tokens = document.getElementById('range-tokens-tax').value;
-
-    $.ajax({
-        url: '{% url "tax" %}',
-        method: 'POST',
-        data: {
-            'tax_input_english': tax_input_english,
-            'tax_input_german': tax_input_german,
-            'tax_range_temp': tax_range_temp,
-            'tax_range_tokens': tax_range_tokens,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        success: function(response) {
-            document.getElementById('Error_tax').innerText = 'Successfully saved Tax data';
-        },
-        error: function(xhr) {
-            document.getElementById('Error_tax').innerText = 'Error saving Tax data: ' + xhr.statusText;
-        }
-    });
-}
 
 document.getElementById('main-rag').addEventListener('submit', function(e) {
     e.preventDefault();
     sendMainRagData();
 });
 
-document.getElementById('accounting-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    sendAccountingData();
-});
-
-document.getElementById('tax-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    sendTaxData();
-});
+d
 
     // Form submission of chat bot
     document.getElementById('chat-form').addEventListener('submit', function(e) {
