@@ -11,7 +11,7 @@ from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.groq import Groq
 import re
-from .models import ChatSession, Accounting, Params, ChatHistory, Taxes
+from .models import ChatSession, Params, ChatHistory
 from groq import Groq as Groq2
 
 # from dotenv import load_dotenv
@@ -64,6 +64,7 @@ def generate_prompt(chat_query):
         )
 
     # Query the engine
+
     bot_response = query_engine.query(response_message)
     response_text = bot_response.text if hasattr(bot_response, 'text') else str(bot_response)
     return response_text
@@ -238,3 +239,25 @@ def generate_title_of_the_chat(user_chat):
         title = "Greeting"
 
     return title
+
+
+def Rename(request, session_id):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        try:
+            obj = ChatSession.objects.get(session_id=session_id)
+            obj.message_title = title
+            obj.save()
+            return JsonResponse({'message': 'success'})
+        except Exception as e:
+            return JsonResponse({'message': str(e)})
+
+
+def delete(request, session_id):
+    if request.method == 'GET':
+        try:
+            obj = ChatSession.objects.get(session_id=session_id)
+            obj.delete()
+            return JsonResponse({'message': 'success'})
+        except Exception as e:
+            return JsonResponse({'message': str(e)})

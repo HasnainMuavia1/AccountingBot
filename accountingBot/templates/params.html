@@ -356,7 +356,7 @@ function sendMainRagData() {
     const rag_range_tokens = document.getElementById('range-tokens-rag').value;
 
     $.ajax({
-        url: '{% url "main_rag" %}',
+        url: '{% url "Dashboard" %}',
         method: 'POST',
         data: {
             'rag_input_english': rag_input_english,

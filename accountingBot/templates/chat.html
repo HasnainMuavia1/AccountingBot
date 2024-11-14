@@ -245,7 +245,7 @@
     border-right: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     overflow: scroll;
-    
+
 }
 
     .sidebar.collapsed {
@@ -306,117 +306,7 @@
         margin-top: 20px;
     }
 
-  .chat-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 12px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    gap: 10px;
-    width: 100%;
-}
-
-    .chat-item i {
-        color: #4a5568;
-        font-size: 1rem;
-    }
-   .chat-item i.fa-comments {
-    color: #4a5568;
-    font-size: 1rem;
-    flex-shrink: 0;
-}
-
-.chat-item span {
-    color: #4a5568;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1;
-}
-.chat-item:hover {
-    background: rgba(245, 80, 54, 0.08);
-    transform: translateX(5px);
-}
-
-   .options-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-.options-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: #6B7280;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    opacity: 0;
-    visibility: hidden;
-}
-
-.chat-item:hover .options-btn {
-    opacity: 1;
-    visibility: visible;
-}
-.options-btn:hover {
-    background: rgba(245, 80, 54, 0.1);
-    color: #F55036;
-}
-    .options-tooltip {
-    position: absolute;
-    left: calc(100% + 10px);
-    top: 70%;
-    transform: translateY(-50%);
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    padding: 6px 0;
-    width: 150px;
-    display: none;
-    z-index: 1100;
-}
-.options-tooltip.show {
-    display: block;
-}
-
-    .options-tooltip button {
-    width: 100%;
-    padding: 8px 12px;
-    background: transparent;
-    border: none;
-    color: #4a5568;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.options-tooltip button:hover {
-    background-color: rgba(245, 80, 54, 0.08);
-    color: #F55036;
-}
- .options-tooltip button i {
-    font-size: 0.9rem;
-    width: 16px;
-    text-align: center;
-}
-
+ 
 
 
     .main-content {
@@ -476,7 +366,134 @@
             left: 20px;
         }
     }
+{#    tooltip functionality #}
+/* Update chat item styles to establish proper stacking context */
+.chat-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+}
 
+.chat-item:hover {
+    background-color: #f7f7f8;
+}
+
+.chat-item i.fa-comments {
+    margin-right: 12px;
+    color: #6b7280;
+}
+
+.chat-item span {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #374151;
+}
+
+/* Update options container to properly position the tooltip */
+.options-container {
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 2;
+}
+
+.chat-item:hover .options-container {
+    opacity: 1;
+}
+
+.options-btn {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.options-btn:hover {
+    color: #374151;
+}
+
+/* Ensure tooltip appears above all other elements */
+.options-tooltip {
+    position: absolute;
+    right: 50%;
+    top: calc(100% + 5px);
+    width: 200px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    z-index: 9999;
+    display: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transform-origin: top right;
+}
+
+.options-tooltip button {
+    position: relative;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #374151;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+.options-tooltip button:hover {
+    background-color: #f7f7f8;
+}
+
+.options-tooltip button i {
+    margin-right: 8px;
+    width: 16px;
+}
+
+.options-tooltip.show {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* Ensure options container is visible when chat item is hovered */
+.chat-item:hover .options-container {
+    opacity: 1;
+}
+
+/* Add overlay when tooltip is shown */
+.options-tooltip.show {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.chat-history {
+    position: relative;
+    z-index: 1;
+}
+    
 </style>
 <body>
 
@@ -502,30 +519,33 @@
 
      
         
-        <!-- Recent Chats -->
-        <div class="chat-history">
-            {% for chat in sidebar_chats %}
-    <div class="chat-item" data-session-id="{{ chat.session_id }}">
-        <i class="fas fa-comments"></i>
-        <span>{{ chat.message_title }}</span>
-        <div class="options-container">
-            <button class="options-btn">
-                <i class="fas fa-ellipsis-v"></i>
-            </button>
-            <div class="options-tooltip">
-                <button class="rename-chat">
-                    <i class="fas fa-edit"></i>
-                    Rename
+       <div class="chat-history">
+    {% for chat in sidebar_chats %}
+        <div class="chat-item" data-session-id="{{ chat.session_id }}">
+            <i class="fas fa-comments"></i>
+            <span>{{ chat.message_title }}</span>
+            <div class="options-container">
+                <button class="options-btn">
+                    <i class="fas fa-ellipsis-v"></i>
                 </button>
-                <button class="delete-chat">
-                    <i class="fas fa-trash"></i>
-                    Delete
-                </button>
+                <div class="options-tooltip">
+                    <button class="rename-chat">
+                        <i class="fas fa-edit"></i>
+                        Rename
+                    </button>
+                    <button class="delete-chat">
+                        <i class="fas fa-trash"></i>
+                        Delete
+                    </button>
+                    <button class="export-chat">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-{% endfor %}
-        </div>
+    {% endfor %}
+</div>
     </div>
 
 
@@ -814,8 +834,11 @@ $(document).ready(function() {
     $(`#${inputId}`).val('');
     showLoadingIndicator();
 
-    // Determine URL based on session_id
-    let url = session_id ? `/chat/${session_id}/` : `{% url "index" %}`;
+    // Get the current session_id from URL if it exists
+    const currentSessionId = getSessionIdFromUrl();
+    
+    // Determine URL based on current session
+    let url = currentSessionId ? `/chat/${currentSessionId}/` : `{% url "index" %}`;
 
     // Send AJAX request for chat submission
     $.ajax({
@@ -828,26 +851,15 @@ $(document).ready(function() {
         success: function(response) {
             removeLoadingIndicator();
 
-            // If a new session_id is created, update session_id and add chat to sidebar
-            if (response.new_session_id && !session_id) {
-                session_id = response.new_session_id;
-
-                // Add new chat to sidebar
-                const newChatItem = `
-                    <div class="chat-item" data-session-id="${session_id}">
-                        <i class="fas fa-comments"></i>
-                        <span>${userQuery}</span>
-                    </div>`;
+            // Only create new chat item if this is a new session
+            if (response.new_session_id && !currentSessionId) {
+                // Create and add new chat item with proper event listeners
+                const newChatItem = createChatItem(response.new_session_id, userQuery);
                 $('.chat-history').prepend(newChatItem);
 
                 // Update URL to reflect the new session
-                const newUrl = `${window.location.origin}/chat/${session_id}/`;
-                history.replaceState(null, null, newUrl);
-
-                // Add event listener to the new chat item
-                $(`.chat-item[data-session-id="${session_id}"]`).on('click', function() {
-                    fetchChatHistory(session_id);
-                });
+                const newUrl = `${window.location.origin}/chat/${response.new_session_id}/`;
+                history.pushState(null, null, newUrl);
             }
 
             // Display bot response
@@ -857,6 +869,36 @@ $(document).ready(function() {
             removeLoadingIndicator();
             console.error("Error:", error);
             appendMessage("Sorry, there was an error processing your request.", false);
+        }
+    });
+}
+
+function fetchChatHistory(sessionId) {
+    if (!sessionId) return;
+
+    // Update URL first
+    const newUrl = `${window.location.origin}/chat/${sessionId}/`;
+    history.pushState(null, null, newUrl);
+
+    $.ajax({
+        url: `/chat/${sessionId}/history/`,
+        method: 'GET',
+        success: function(response) {
+            // Clear existing chat messages
+            $('#chat-messages').html('');
+
+            // Switch to the regular chat interface
+            switchToRegularChat();
+
+            // Append retrieved chat messages
+            response.forEach(message => {
+                appendMessage(message.message_user, true);
+                appendMessage(message.message_bot, false);
+            });
+        },
+        error: function(error) {
+            console.error("Error:", error);
+            appendMessage("Sorry, there was an error fetching the chat history.", false);
         }
     });
 }
@@ -985,60 +1027,266 @@ document.addEventListener("DOMContentLoaded", function () {
     textElement.textContent = "";
     type();
 });
-    document.addEventListener('DOMContentLoaded', function() {
-    // Handle tooltip functionality
-    const optionsBtns = document.querySelectorAll('.options-btn');
-    let activeTooltip = null;
+// Add this to your existing JavaScript section
+document.addEventListener('DOMContentLoaded', function() {
+    // Close tooltips when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.options-container')) {
+            document.querySelectorAll('.options-tooltip').forEach(tooltip => {
+                tooltip.classList.remove('show');
+            });
+        }
+    });
 
-    optionsBtns.forEach(btn => {
-        const tooltip = btn.nextElementSibling;
-
-        btn.addEventListener('click', (e) => {
+    // Handle options button clicks
+    document.querySelectorAll('.options-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
             e.stopPropagation();
+            const tooltip = this.nextElementSibling;
 
-            // If there's an active tooltip and it's not this one, hide it
-            if (activeTooltip && activeTooltip !== tooltip) {
-                activeTooltip.classList.remove('show');
-            }
+            // Close other tooltips
+            document.querySelectorAll('.options-tooltip').forEach(t => {
+                if (t !== tooltip) {
+                    t.classList.remove('show');
+                }
+            });
 
             // Toggle current tooltip
             tooltip.classList.toggle('show');
-            activeTooltip = tooltip.classList.contains('show') ? tooltip : null;
-
-            // Adjust tooltip position if it goes outside viewport
-            if (tooltip.classList.contains('show')) {
-                const tooltipRect = tooltip.getBoundingClientRect();
-                const viewportHeight = window.innerHeight;
-
-                if (tooltipRect.bottom > viewportHeight) {
-                    const overflowAmount = tooltipRect.bottom - viewportHeight;
-                    tooltip.style.top = `calc(50% - ${overflowAmount}px)`;
-                }
-            }
         });
+    });
 
-        // Prevent tooltip from closing when clicking inside it
-        tooltip.addEventListener('click', (e) => {
+    // Prevent chat item click when clicking tooltip options
+    document.querySelectorAll('.options-tooltip button').forEach(button => {
+        button.addEventListener('click', function(e) {
             e.stopPropagation();
         });
     });
 
-    // Close tooltip when clicking outside
-    document.addEventListener('click', () => {
-        if (activeTooltip) {
-            activeTooltip.classList.remove('show');
-            activeTooltip = null;
-        }
-    });
+    
 
-    // Close tooltip when scrolling the sidebar
-    document.querySelector('.sidebar').addEventListener('scroll', () => {
-        if (activeTooltip) {
-            activeTooltip.classList.remove('show');
-            activeTooltip = null;
-        }
+    
+
+    // Handle export action
+    document.querySelectorAll('.export-chat').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const chatItem = this.closest('.chat-item');
+            const sessionId = chatItem.dataset.sessionId;
+
+            // Add your export API call here
+            console.log('Export chat:', sessionId);
+            alert('Exporting chat...');
+        });
     });
 });
+
+
+
+function deleteChat(sessionId) {
+    const chatItem = $(`[data-session-id="${sessionId}"]`);
+    $.ajax({
+        url: `/chat/${sessionId}/delete/`,
+        method: 'GET',
+        success: function(response) {
+            if (response.message === 'success') {
+                chatItem.remove();
+                startNewChat();
+            }
+        },
+        error: function(error) {
+            console.error(`Error deleting chat: ${error.responseText}`);
+        }
+    });
+}
+
+
+$('.delete-chat').on('click', function() {
+    const sessionId = $(this).closest('.chat-item').data('session-id');
+    deleteChat(sessionId);
+});
+// Add this to your existing JavaScript code
+
+function makeEditable(element, sessionId) {
+    // Create an input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = element.textContent.trim();
+    input.className = 'edit-title-input';
+    
+    // Style the input to match the existing text
+    input.style.cssText = `
+        border: none;
+        background: transparent;
+        width: 100%;
+        outline: none;
+        padding: 0;
+        margin: 0;
+        font-size: inherit;
+        font-family: inherit;
+        color: inherit;
+        border: 1px solid black;
+    `;
+
+    // Replace the span with input
+    element.replaceWith(input);
+    input.focus();
+    input.select();
+
+    // Handle save on enter or blur
+    function saveChange() {
+        const newTitle = input.value.trim();
+        if (newTitle && newTitle !== element.textContent) {
+            $.ajax({
+                url: `/chat/${sessionId}/rename/`,
+                method: 'POST',
+                data: {
+                    'title': newTitle,
+                    'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                success: function(response) {
+                    if (response.message === 'success') {
+                        element.textContent = newTitle;
+                    }
+                },
+                error: function(error) {
+                    console.error(`Error renaming chat: ${error.responseText}`);
+                }
+            });
+        }
+        input.replaceWith(element);
+    }
+
+    // Event listeners for input
+    input.addEventListener('blur', saveChange);
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveChange();
+        }
+        if (e.key === 'Escape') {
+            input.replaceWith(element);
+        }
+    });
+}
+
+// Update the click handler for chat items
+document.addEventListener('DOMContentLoaded', function() {
+    // Update the rename button click handler
+    document.querySelectorAll('.rename-chat').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const chatItem = this.closest('.chat-item');
+            const titleSpan = chatItem.querySelector('span');
+            const sessionId = chatItem.dataset.sessionId;
+            makeEditable(titleSpan, sessionId);
+            
+            // Close the tooltip
+            const tooltip = this.closest('.options-tooltip');
+            if (tooltip) {
+                tooltip.classList.remove('show');
+            }
+        });
+    });
+});
+
+// Add necessary CSS
+const style = document.createElement('style');
+style.textContent = `
+    .edit-title-input:focus {
+        box-shadow: 0 1px 2px rgba(245, 80, 54, 0.1);
+    }
+    
+    .chat-item span {
+        transition: all 0.2s ease;
+    }
+    
+    .chat-item:hover span {
+        color: black;
+    }
+`;
+document.head.appendChild(style);
+
+function createChatItem(sessionId, title) {
+    const chatItem = document.createElement('div');
+    chatItem.className = 'chat-item';
+    chatItem.setAttribute('data-session-id', sessionId);
+    
+    chatItem.innerHTML = `
+        <i class="fas fa-comments"></i>
+        <span>${title}</span>
+        <div class="options-container">
+            <button class="options-btn">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <div class="options-tooltip">
+                <button class="rename-chat">
+                    <i class="fas fa-edit"></i>
+                    Rename
+                </button>
+                <button class="delete-chat">
+                    <i class="fas fa-trash"></i>
+                    Delete
+                </button>
+                <button class="export-chat">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Attach event listeners to the new chat item
+    attachChatItemEventListeners(chatItem);
+    
+    return chatItem;
+}
+
+function attachChatItemEventListeners(chatItem) {
+    // Options button click
+    const optionsBtn = chatItem.querySelector('.options-btn');
+    optionsBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const tooltip = this.nextElementSibling;
+        document.querySelectorAll('.options-tooltip').forEach(t => {
+            if (t !== tooltip) t.classList.remove('show');
+        });
+        tooltip.classList.toggle('show');
+    });
+
+    // Rename button
+    const renameBtn = chatItem.querySelector('.rename-chat');
+    renameBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const titleSpan = chatItem.querySelector('span');
+        const sessionId = chatItem.dataset.sessionId;
+        makeEditable(titleSpan, sessionId);
+        this.closest('.options-tooltip').classList.remove('show');
+    });
+
+    // Delete button
+    const deleteBtn = chatItem.querySelector('.delete-chat');
+    deleteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const sessionId = chatItem.dataset.sessionId;
+        deleteChat(sessionId);
+    });
+
+    // Export button
+    const exportBtn = chatItem.querySelector('.export-chat');
+    exportBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const sessionId = chatItem.dataset.sessionId;
+        console.log('Export chat:', sessionId);
+        alert('Exporting chat...');
+    });
+
+    // Chat item click
+    chatItem.addEventListener('click', function() {
+        const sessionId = this.dataset.sessionId;
+        fetchChatHistory(sessionId);
+    });
+}
+
 </script>
 
 </body>

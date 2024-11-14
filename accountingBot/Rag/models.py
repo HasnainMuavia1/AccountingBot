@@ -10,20 +10,6 @@ class Params(models.Model):
     max_tokens = models.IntegerField(default=2000)
 
 
-class Accounting(models.Model):
-    SystemPromptGerman = models.TextField()
-    SystemPromptEnglish = models.TextField()
-    temperature = models.FloatField()
-    max_tokens = models.IntegerField(default=2000)
-
-
-class Taxes(models.Model):
-    SystemPromptGerman = models.TextField()
-    SystemPromptEnglish = models.TextField()
-    temperature = models.FloatField()
-    max_tokens = models.IntegerField(default=2000)
-
-
 class ChatSession(models.Model):
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
     message_title = models.TextField()

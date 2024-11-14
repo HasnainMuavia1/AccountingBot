@@ -24,6 +24,7 @@ urlpatterns = [
     path('newsession/', views.new_session, name='new_session'),
     path('upload/',views.upload,name='upload'),
     path('Dashboard/',views.Dashboard,name='Dashboard'),
-
+    path('chat/<str:session_id>/rename/', views.Rename, name='rename'),
+    path('chat/<str:session_id>/delete/', views.delete, name='delete'),
 
 ]
