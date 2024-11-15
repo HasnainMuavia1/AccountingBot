@@ -397,7 +397,7 @@
             sendButton.classList.remove('active');
 
             $.ajax({
-                url: '{% url "index" %}',
+                url: '{% url "assistant" %}',
                 method: 'POST',
                 data: {
                     query: message,

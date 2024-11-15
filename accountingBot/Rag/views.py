@@ -168,8 +168,7 @@ def upload(request):
 
 
 def Dashboard(request):
-
-    return render(request, 'params.html',{'obj': Params.objects.first()})
+    return render(request, 'params.html', {'obj': Params.objects.first()})
 
 
 def generate_session_id(user_chat, session_id):
@@ -211,7 +210,8 @@ def generate_title_of_the_chat(user_chat):
                     "summarizing the main topic or intent. Keep the title concise and meaningful, capturing "
                     "the core theme or purpose of the conversation. "
                     "If the user message is unclear or includes mistakes, still generate a 2-3 word title that reflects"
-                    "the best interpretation of the topic. If the message is purely a greeting, such as 'Hello' or 'Hi,' "
+                    "the best interpretation of the topic. If the message is purely a greeting, such as 'Hello' or "
+                    "'Hi,'"
                     "respond with 'Greeting' as the title."
                 )
             },
@@ -285,3 +285,92 @@ def params_save(request):
             return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def ChatAnalysis():
+    """
+    Retrieve and concatenate all user and bot messages from the database.
+    Returns:
+        A string containing user and bot messages in chronological order.
+    """
+    obj = ChatHistory.objects.all().order_by("timestamp")  # Ensure messages are in order
+    chat_context = ""
+    for chat in obj:
+        chat_context += f"User: {chat.message_user}\nBot: {chat.message_bot}\n"
+    return chat_context.strip()
+
+
+def analysisOfChat(user_chat, message):
+    """
+    Analyze user messages and generate insights using an AI model.
+
+    Parameters:
+    - user_chat: Context or conversation history related to the user's messages (optional).
+    - message: A collection of user messages or a specific message that requires analysis.
+
+    Returns:
+    - A detailed analysis or insights about the provided user messages, such as:
+      - The most frequent type of question or theme.
+      - Common patterns in the messages.
+      - Suggestions for improvement or trends in the conversation.
+
+    The function uses a smart AI model to provide meaningful insights into the content
+    and characteristics of the user's messages.
+    """
+
+    # AI-driven analysis using a chat model
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a highly intelligent assistant designed to provide insightful analysis "
+                    "of user messages. Your goal is to process a set of user messages and provide "
+                    "a detailed summary of insights. These insights should include patterns, trends, "
+                    "frequently discussed topics, or unique observations about the messages. "
+                    "\n\nKey Instructions:\n"
+                    "1. If the user provides multiple messages, identify and describe the main trends, "
+                    "frequent themes, or recurring questions.\n"
+                    "2. Highlight the most commonly asked type of question or topic, if applicable.\n"
+                    "3. Provide a brief summary or suggestions for better engagement if appropriate."
+                    f"here are the questions {user_chat}"
+                )
+            },
+            {
+                "role": "user",
+                "content": f"{message}",
+            }
+        ],
+        model="llama3-8b-8192",
+        temperature=0.6,  # Balances creativity and relevance in the response
+        max_tokens=1500,  # Allows for a detailed analysis
+        top_p=1,  # Determines the likelihood distribution for output
+        stop=None,  # No specific stop sequence for the output
+        stream=False,  # Disables streaming for a single response
+    )
+
+    # Return the AI-generated insights or analysis
+    return chat_completion.choices[0].message.content
+
+
+# user chat
+
+
+@csrf_exempt
+def Assistant_bot(request):
+    if request.method == 'POST':
+        chat_query = request.POST.get('query', '').strip()
+        user_chat = ChatAnalysis()  # Retrieve chat history for analysis
+
+        if not chat_query:
+            return JsonResponse({'message': 'Query parameter is required.', 'status': 'error'}, status=400)
+
+        try:
+            # Pass user_chat to the analysis function
+            response_text = analysisOfChat(user_chat=user_chat, message=chat_query)
+
+            return JsonResponse({'message': response_text, 'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'message': f'An error occurred: {str(e)}', 'status': 'error'}, status=500)
+
+    return JsonResponse({'message': 'Invalid request method. Please use POST.', 'status': 'error'}, status=405)
