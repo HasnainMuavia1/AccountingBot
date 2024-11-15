@@ -26,5 +26,6 @@ urlpatterns = [
     path('Dashboard/',views.Dashboard,name='Dashboard'),
     path('chat/<str:session_id>/rename/', views.Rename, name='rename'),
     path('chat/<str:session_id>/delete/', views.delete, name='delete'),
+    path('params_save/',views.params_save,name='params_save'),
 
 ]

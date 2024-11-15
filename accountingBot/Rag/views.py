@@ -168,7 +168,8 @@ def upload(request):
 
 
 def Dashboard(request):
-    return render(request, 'params.html')
+
+    return render(request, 'params.html',{'obj': Params.objects.first()})
 
 
 def generate_session_id(user_chat, session_id):
@@ -261,3 +262,26 @@ def delete(request, session_id):
             return JsonResponse({'message': 'success'})
         except Exception as e:
             return JsonResponse({'message': str(e)})
+
+
+def params_save(request):
+    if request.method == 'POST':
+        try:
+            data = request.POST
+            # rag_range_temp = data.get('rag_range_temp')
+            # print(rag_range_temp)
+            rag_range_tokens = data.get('rag_range_tokens')
+            print(rag_range_tokens)
+
+            # Process the received data (e.g., save to database or further processing)
+            obj, _ = Params.objects.get_or_create(id=1)
+            # obj.temperature = rag_range_temp
+            obj.max_tokens = rag_range_tokens
+            obj.save()
+
+            # Respond with a success message
+            return JsonResponse({'message': 'Successfully saved settings'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)

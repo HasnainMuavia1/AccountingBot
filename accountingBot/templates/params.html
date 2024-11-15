@@ -13,6 +13,17 @@
             height: 100%;
         }
 
+        .settings-panel {
+            height: calc(100vh - 2rem);
+            overflow-y: auto;
+        }
+
+        .chat-panel {
+            height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+        }
+
         .slider-container {
             position: relative;
             padding-top: 25px;
@@ -51,12 +62,6 @@
             pointer-events: none;
         }
 
-        .chat-section {
-            height: 60vh;
-            display: flex;
-            flex-direction: column;
-        }
-
         .chat-messages {
             flex-grow: 1;
             overflow-y: auto;
@@ -91,68 +96,48 @@
             border-bottom-right-radius: 0.25rem;
         }
 
-        /* Update bot icon color and styling */
-.bot-icon {
-    width: 32px;
-    height: 32px;
-    background-color: #F55036; /* Changed to orange to match theme */
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: white; /* Make the icon white for better contrast */
-}
+        .bot-message .message-content {
+            background-color: #f1f1f1;
+            color: black;
+            border-bottom-left-radius: 0.25rem;
+            margin-left: 8px;
+        }
 
-/* Adjust message actions positioning */
-.message-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
-    padding-left: 0; /* Remove the left padding */
-}
+        .bot-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #F55036;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: white;
+        }
 
-/* Update bot message structure */
-.bot-message {
-    margin-right: auto;
-    flex-direction: row; /* Ensure proper flex direction */
-    align-items: flex-start;
-}
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
 
-/* Add specific styling for the copy button */
-.action-button {
-    background: none;
-    border: none;
-    color: #6b7280;
-    padding: 0.25rem;
-    cursor: pointer;
-    transition: color 0.2s;
-    display: inline-flex; /* Ensure icon displays properly */
-    align-items: center;
-    justify-content: center;
-}
+        .action-button {
+            background: none;
+            border: none;
+            color: #6b7280;
+            padding: 0.25rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
 
-.action-button:hover {
-    color: #F55036;
-}
-
-/* Update message content spacing for bot messages */
-.bot-message .message-content {
-    background-color: #f1f1f1;
-    color: black;
-    border-bottom-left-radius: 0.25rem;
-    margin-left: 8px;
-}
-
-
+        .action-button:hover {
+            color: #F55036;
+        }
 
         .chat-input-wrapper {
             padding: 1rem;
             border-top: 1px solid #e5e7eb;
-        }
-
-        .chat-input-container {
-            position: relative;
+            background-color: white;
         }
 
         .chat-input {
@@ -162,7 +147,6 @@
             padding: 0.75rem 3rem 0.75rem 1rem;
             border: 1px solid #e5e7eb;
             outline: none;
-            overflow-y: hidden ;
             transition: border-color 0.2s;
         }
 
@@ -179,8 +163,6 @@
             border-radius: 50%;
             background-color: #F55036;
             border: none;
-            margin-bottom: 6px;
-            overflow-y: hidden ;
             color: white;
             display: flex;
             align-items: center;
@@ -194,89 +176,90 @@
             opacity: 1;
         }
 
-        .send-button:hover {
-            background-color: #f77c5c;
-            transform: translateX(-2px);
+        .action-bar {
+            padding: 0.5rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .save-button {
+        .export-button {
             background-color: #F55036;
             color: white;
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 0.375rem;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             transition: background-color 0.2s;
         }
 
-        .save-button:hover {
+        .export-button:hover {
             background-color: #f77c5c;
         }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <!-- Top Row Containers -->
-    <div class="row g-4 mb-4">
-        <!-- Params Main Container -->
-        <div class="col-md-4">
-            <form action="" id="main-rag" method="post">
-                <div class="custom-container">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold m-0">Main RAG</h4>
-                    <button class="save-button" type="submit">
-                        <i class="fas fa-save"></i>
-                        <span>Save</span>
-                    </button>
-                    <p id="Error_rag"></p>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Input Text (English)</label>
-                    <input type="text" id="eng-input-rag" class="form-control" placeholder="Enter text in English">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Input Text (German)</label>
-                    <input type="text" id="german-input-rag"  class="form-control" placeholder="Text auf Deutsch eingeben">
-                </div>
-                <div class="slider-container">
-                    <label class="form-label">Value One</label>
-                    <span class="slider-value">1.0</span>
-                    <input type="range" id="range-temp-rag"  class="slider" min="0" max="2" step="0.1" value="1.0">
-                </div>
-                <div class="slider-container">
-                    <label class="form-label">Value Two</label>
-                    <span class="slider-value">1000</span>
-                    <input type="range" id="range-tokens-rag" class="slider" min="0" max="2000" step="100" value="1000">
-                </div>
+<div class="container-fluid py-3">
+    <div class="row g-3">
+        <!-- Settings Panel -->
+<div class="col-md-4">
+    <div class="custom-container settings-panel">
+        <form id="main-rag" method="post">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold m-0">Fine Tuning</h4>
+                <button class="export-button" type="submit">
+                    <i class="fas fa-save"></i>
+                    <span>Save</span>
+                </button>
             </div>
-            </form>
-        </div>
+            <p id="Error_rag" class="text-danger"></p>
+
+            <div class="slider-container">
+                <label class="form-label"><b style="color: red">Temperature</b></label>
+                <span>(Randomness of a chatbot)</span>
+                <span class="slider-value">{{ obj.temperature|default:1.0 }}</span>
+                <input type="range" id="range-temp-rag" class="slider" min="0" max="2" step="0.1"
+                       value="{{ obj.temperature|default:1.0 }}">
+            </div>
+
+            <div class="slider-container">
+                <label class="form-label"><b style="color: red">Tokens</b></label>
+                <span>(how much chatbot will respond)</span>
+                <span class="slider-value">{{ obj.max_tokens|default:1000 }}</span>
+                <input type="range" id="range-tokens-rag" class="slider" min="0" max="2000" step="100"
+                       value="{{ obj.max_tokens|default:1000 }}">
+            </div>
+        </form>
     </div>
+</div>
 
-    <!-- Chat Container -->
-    <div class="row">
+        <!-- Chat Panel -->
+        <div class="col-md-8">
+            <div class="custom-container chat-panel">
+                <div class="action-bar">
+                    <button id="export-chat" class="export-button">
+                        <i class="fas fa-download"></i>
+                        <span>Export Chat</span>
+                    </button>
+                </div>
 
-        <div class="col-12">
-            <div class="custom-container">
-                <div class="chat-section">
-                    <div id="chat-messages" class="chat-messages"></div>
-                    <div class="chat-input-wrapper">
-                        <form id="chat-form" class="chat-input-container">
-                            {% csrf_token %}
-                            <textarea
-                                id="chat-input"
-                                class="chat-input"
-                                placeholder="Message ChatBot..."
-                                rows="1"
-                            ></textarea>
-                            <button type="submit" id="send-button" class="send-button">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </form>
-                    </div>
+                <div id="chat-messages" class="chat-messages"></div>
+
+                <div class="chat-input-wrapper">
+                    <form id="chat-form" class="position-relative">
+                        {% csrf_token %}
+                        <textarea
+                            id="chat-input"
+                            class="chat-input"
+                            placeholder="Message ChatBot..."
+                            rows="1"
+                        ></textarea>
+                        <button type="submit" id="send-button" class="send-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -298,7 +281,7 @@
         });
     });
 
-    // Textarea auto-resize and send button activation
+    // Textarea auto-resize
     const textarea = document.querySelector('.chat-input');
     const sendButton = document.getElementById('send-button');
 
@@ -308,7 +291,7 @@
         sendButton.classList.toggle('active', this.value.trim().length > 0);
     });
 
-    // Append message function without scrolling
+    // Chat message handling
     function appendMessage(content, isUser) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
@@ -325,7 +308,7 @@
                 <div class="message-container">
                     <div class="message-content">${content}</div>
                     <div class="message-actions">
-                        <button class="action-button" onclick="copyToClipboard(this)" data-content="${content}">
+                        <button class="action-button copy-btn" onclick="copyToClipboard(this)" data-content="${content}">
                             <i class="fas fa-copy"></i>
                         </button>
                     </div>
@@ -333,10 +316,12 @@
             `;
         }
 
-        document.getElementById('chat-messages').appendChild(messageDiv);
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // Copy to clipboard function
+    // Copy to clipboard
     function copyToClipboard(button) {
         const content = button.getAttribute('data-content');
         navigator.clipboard.writeText(content).then(() => {
@@ -348,44 +333,60 @@
         });
     }
 
-    // Function to send data from Main RAG form
-function sendMainRagData() {
-    const rag_input_english = document.getElementById('eng-input-rag').value;
-    const rag_input_german = document.getElementById('german-input-rag').value;
-    const rag_range_temp = document.getElementById('range-temp-rag').value;
-    const rag_range_tokens = document.getElementById('range-tokens-rag').value;
+    // Export chat functionality
+    document.getElementById('export-chat').addEventListener('click', function() {
+        const messages = document.getElementById('chat-messages').children;
+        let chatText = '';
 
-    $.ajax({
-        url: '{% url "Dashboard" %}',
-        method: 'POST',
-        data: {
-            'rag_input_english': rag_input_english,
-            'rag_input_german': rag_input_german,
-            'rag_range_temp': rag_range_temp,
-            'rag_range_tokens': rag_range_tokens,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        success: function(response) {
-            document.getElementById('Error_rag').innerText = 'Successfully saved Main RAG data';
-        },
-        error: function(xhr) {
-            document.getElementById('Error_rag').innerText = 'Error saving Main RAG data: ' + xhr.statusText;
-        }
+        Array.from(messages).forEach(message => {
+            const isUser = message.classList.contains('user-message');
+            const content = message.querySelector('.message-content').textContent;
+            const timestamp = new Date().toISOString();
+            chatText += `${isUser ? 'User' : 'Bot'} (${timestamp}): ${content}\n\n`;
+        });
+
+        const blob = new Blob([chatText], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chat-export-${new Date().toISOString()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
     });
-}
 
+    // Form submissions
+    function sendMainRagData() {
+        const formData = {
+            rag_range_temp: document.getElementById('range-temp-rag').value,
+            rag_range_tokens: document.getElementById('range-tokens-rag').value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        };
 
-document.getElementById('main-rag').addEventListener('submit', function(e) {
-    e.preventDefault();
-    sendMainRagData();
-});
+        $.ajax({
+            url: '{% url "params_save" %}',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                document.getElementById('Error_rag').innerHTML = '<span class="text-success">Successfully saved settings</span>';
+                setTimeout(() => {
+                    document.getElementById('Error_rag').innerHTML = '';
+                }, 3000);
+            },
+            error: function(xhr) {
+                document.getElementById('Error_rag').innerHTML = `<span class="text-danger">Error: ${xhr.statusText}</span>`;
+            }
+        });
+    }
 
-d
+    document.getElementById('main-rag').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMainRagData();
+    });
 
-    // Form submission of chat bot
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
-
         const input = document.getElementById('chat-input');
         const message = input.value.trim();
 
@@ -395,13 +396,12 @@ d
             input.style.height = 'auto';
             sendButton.classList.remove('active');
 
-            // AJAX call to backend
             $.ajax({
                 url: '{% url "index" %}',
                 method: 'POST',
                 data: {
-                    'query': message,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    query: message,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(response) {
                     appendMessage(response.message, false);
@@ -413,7 +413,7 @@ d
         }
     });
 
-    // Enter key handling for submission without scrolling
+    // Enter key handling
     textarea.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -423,5 +423,4 @@ d
         }
     });
 </script>
-
 {% endblock %}

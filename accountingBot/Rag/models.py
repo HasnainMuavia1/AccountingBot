@@ -4,8 +4,6 @@ import uuid
 
 # Create your models here.
 class Params(models.Model):
-    SystemPromptGerman = models.TextField()
-    SystemPromptEnglish = models.TextField()
     temperature = models.FloatField()
     max_tokens = models.IntegerField(default=2000)
 
