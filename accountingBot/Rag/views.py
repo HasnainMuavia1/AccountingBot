@@ -268,14 +268,14 @@ def params_save(request):
     if request.method == 'POST':
         try:
             data = request.POST
-            # rag_range_temp = data.get('rag_range_temp')
-            # print(rag_range_temp)
+            rag_range_temp = data.get('rag_range_temp')
+            print(rag_range_temp)
             rag_range_tokens = data.get('rag_range_tokens')
             print(rag_range_tokens)
 
             # Process the received data (e.g., save to database or further processing)
             obj, _ = Params.objects.get_or_create(id=1)
-            # obj.temperature = rag_range_temp
+            obj.temperature = rag_range_temp
             obj.max_tokens = rag_range_tokens
             obj.save()
 
