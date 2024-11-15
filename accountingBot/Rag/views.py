@@ -210,7 +210,7 @@ def generate_title_of_the_chat(user_chat):
                     "Given a user message or chat history, create a brief and descriptive 2-3 word title "
                     "summarizing the main topic or intent. Keep the title concise and meaningful, capturing "
                     "the core theme or purpose of the conversation. "
-                    "If the user message is unclear or includes mistakes, still generate a 2-3 word title that reflects "
+                    "If the user message is unclear or includes mistakes, still generate a 2-3 word title that reflects"
                     "the best interpretation of the topic. If the message is purely a greeting, such as 'Hello' or 'Hi,' "
                     "respond with 'Greeting' as the title."
                 )
