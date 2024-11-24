@@ -1,0 +1,673 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.tutorialjinni.com/font-awesome/6.6.0/css/all.min.css">
+    <style>
+       /* Color Variables and Base Styles */
+:root {
+    --primary-gradient-1: #FF3366;  /* Vibrant Pink */
+    --primary-gradient-2: #FF6B6B;  /* Coral */
+    --secondary-gradient-1: #4158D0; /* Royal Blue */
+    --secondary-gradient-2: #C850C0; /* Purple */
+    --accent-color: #FF3366;
+    --bg-color: #ffffff;
+    --card-bg: #f8f9fd;
+    --text-primary: #2D3748;
+    --text-secondary: #4A5568;
+    --border-color: #E2E8F0;
+    --input-bg: #ffffff;
+    --hover-bg: #f0f4ff;
+    --success-color: #48BB78;
+    --error-color: #F56565;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-image:
+        radial-gradient(circle at 0% 0%, rgba(65, 88, 208, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(255, 51, 102, 0.04) 0%, transparent 40%);
+}
+
+/* Header Styles */
+.header {
+    background: #ffffff;
+    padding: 0.75rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+
+/* Main Container Styles */
+.main-wrapper {
+    padding-top: 80px;
+    padding-bottom: 60px;
+    min-height: calc(100vh - 100px);
+}
+
+.container-fluid {
+    max-width: 1200px;
+    padding: 0 1rem;
+    margin: 0 auto;
+}
+
+.row {
+    margin: -15px -0.75rem;
+}
+
+.col-md-4, .col-md-8 {
+    padding: 0 0.75rem;
+}
+
+/* Custom Container */
+.custom-container {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    height: calc(100vh - 140px);
+    margin: 1rem 0;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Chat Panel */
+.chat-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 1rem;
+    max-width: 90%;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.user-message {
+    margin-left: auto;
+    background: linear-gradient(135deg, var(--secondary-gradient-1), var(--secondary-gradient-2));
+    color: white;
+}
+
+.bot-message {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+/* Input Styles */
+.chat-input-wrapper {
+    padding: 1rem;
+    background: #ffffff;
+    border-top: 1px solid var(--border-color);
+}
+
+.chat-input {
+    width: 100%;
+    resize: none;
+    border-radius: 12px;
+    padding: 0.75rem 3rem 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transition: all 0.3s ease;
+    min-height: 45px;
+}
+
+.chat-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(255, 51, 102, 0.1);
+    outline: none;
+}
+
+/* Button Styles */
+.export-button {
+    background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(255, 51, 102, 0.2);
+}
+
+.export-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 51, 102, 0.3);
+}
+
+.send-button {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 51, 102, 0.2);
+}
+
+.send-button:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 51, 102, 0.3);
+}
+
+/* Settings Panel */
+.settings-panel {
+    height: 100%;
+    padding: 1rem;
+}
+
+.slider-container {
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding: 1rem;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border-color);
+    outline: none;
+    margin-top: 1.5rem;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+    cursor: pointer;
+    border: 2px solid white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(255, 51, 102, 0.2);
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
+}
+
+.slider-value {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 51, 102, 0.2);
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+    font-size: 1rem;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+    font-size: 0.8rem;
+}
+
+/* Footer */
+.footer {
+    background: #ffffff;
+    padding: 0.75rem 0;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.footer-text {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Message Actions */
+.message-actions {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.message:hover .message-actions {
+    opacity: 1;
+}
+
+.copy-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+}
+
+.copy-btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--accent-color);
+}
+
+/* Bot Icon */
+.bot-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--secondary-gradient-1), var(--secondary-gradient-2));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(65, 88, 208, 0.2);
+}
+
+/* Scrollbar Styling */
+.chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: var(--card-bg);
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+    border-radius: 4px;
+    border: 2px solid var(--card-bg);
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-gradient-2), var(--primary-gradient-1));
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 0 1rem;
+    }
+
+    .container-fluid {
+        padding: 0 0.75rem;
+    }
+
+    .custom-container {
+        height: auto;
+        min-height: 400px;
+    }
+
+    .chat-panel {
+        height: calc(100vh - 200px);
+    }
+
+    .message {
+        max-width: 95%;
+    }
+
+    .export-button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .settings-panel {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-title {
+        font-size: 1.25rem;
+    }
+
+    .main-wrapper {
+        padding-top: 70px;
+    }
+
+    .message {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        max-width: 100%;
+    }
+
+    .chat-input {
+        font-size: 0.9rem;
+        padding: 0.6rem 2.5rem 0.6rem 0.75rem;
+    }
+
+    .settings-panel {
+        padding: 0.75rem;
+    }
+
+    .slider-container {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .bot-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .export-button {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8rem;
+    }
+}
+    </style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header">
+    <div class="header-content">
+        <h1 class="header-title">AccountingBot</h1>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="main-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Settings Panel -->
+            <div class="col-md-4">
+                <div class="custom-container">
+                    <div class="settings-panel">
+                        <form id="main-rag" method="post">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="fw-bold m-0">Settings</h4>
+                                <button class="export-button" type="submit">
+                                    <i class="fas fa-save"></i>
+                                    <span>Save</span>
+                                </button>
+                            </div>
+                            <p id="Error_rag" class="text-danger"></p>
+
+                            <div class="slider-container">
+                                <label class="form-label">Temperature</label>
+                                <span class="text-secondary d-block mb-2">Controls response creativity</span>
+                                <span class="slider-value">{{ obj.temperature|default:1.0 }}</span>
+                                <input type="range" id="range-temp-rag" class="slider" min="0" max="2" step="0.1" value="{{ obj.temperature|default:1.0 }}">
+                            </div>
+
+                            <div class="slider-container">
+                                <label class="form-label">Maximum Tokens</label>
+                                <span class="text-secondary d-block mb-2">Controls response length</span>
+                                <span class="slider-value">{{ obj.max_tokens|default:1000 }}</span>
+                                <input type="range" id="range-tokens-rag" class="slider" min="0" max="2000" step="100" value="{{ obj.max_tokens|default:1000 }}">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Panel -->
+            <div class="col-md-8">
+                <div class="custom-container">
+                    <div class="chat-panel">
+                        <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary">
+                            <button id="export-chat" class="export-button">
+                                <i class="fas fa-download"></i>
+                                <span>Export Chat</span>
+                            </button>
+                        </div>
+
+                        <div id="chat-messages" class="chat-messages"></div>
+
+                        <div class="chat-input-wrapper">
+                            <form id="chat-form" class="position-relative">
+                                {% csrf_token %}
+                                <textarea id="chat-input" class="chat-input" placeholder="Type your message..." rows="1"></textarea>
+                                <button type="submit" id="send-button" class="send-button">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <p class="footer-text">© 2024 AccountingBot. All rights reserved.</p>
+</footer>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Slider functionality
+    document.querySelectorAll('.slider').forEach(slider => {
+        const valueDisplay = slider.parentElement.querySelector('.slider-value');
+        slider.addEventListener('input', (e) => {
+            valueDisplay.textContent = e.target.value;
+            const percent = (e.target.value - e.target.min) / (e.target.max - e.target.min);
+            valueDisplay.style.left = `${percent * 100}%`;
+        });
+    });
+
+    // Textarea auto-resize
+    const textarea = document.querySelector('.chat-input');
+    const sendButton = document.getElementById('send-button');
+
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        sendButton.classList.toggle('active', this.value.trim().length > 0);
+    });
+
+    // Chat message handling
+    function appendMessage(content, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+
+        if (isUser) {
+            messageDiv.innerHTML = `
+                <div class="message-content">${content}</div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="bot-icon">
+                    <i class="fas fa-robot" style="color: white;"></i>
+                </div>
+                <div class="message-container">
+                    <div class="message-content">${content}</div>
+                    <div class="message-actions">
+                        <button class="action-button copy-btn" onclick="copyToClipboard(this)" data-content="${content}">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Copy to clipboard
+    function copyToClipboard(button) {
+        const content = button.getAttribute('data-content');
+        navigator.clipboard.writeText(content).then(() => {
+            const icon = button.querySelector('i');
+            icon.className = 'fas fa-check';
+            setTimeout(() => {
+                icon.className = 'fas fa-copy';
+            }, 1000);
+        });
+    }
+
+    // Export chat functionality
+    document.getElementById('export-chat').addEventListener('click', function() {
+        const messages = document.getElementById('chat-messages').children;
+        let chatText = '';
+
+        Array.from(messages).forEach(message => {
+            const isUser = message.classList.contains('user-message');
+            const content = message.querySelector('.message-content').textContent;
+            const timestamp = new Date().toISOString();
+            chatText += `${isUser ? 'User' : 'Bot'} (${timestamp}): ${content}\n\n`;
+        });
+
+        const blob = new Blob([chatText], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chat-export-${new Date().toISOString()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    });
+
+    // Form submissions
+    function sendMainRagData() {
+        const formData = {
+            rag_range_temp: document.getElementById('range-temp-rag').value,
+            rag_range_tokens: document.getElementById('range-tokens-rag').value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        };
+
+        $.ajax({
+            url: '{% url "params_save" %}',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                document.getElementById('Error_rag').innerHTML = '<span class="text-success">Successfully saved settings</span>';
+                setTimeout(() => {
+                    document.getElementById('Error_rag').innerHTML = '';
+                }, 3000);
+            },
+            error: function(xhr) {
+                document.getElementById('Error_rag').innerHTML = `<span class="text-danger">Error: ${xhr.statusText}</span>`;
+            }
+        });
+    }
+
+    document.getElementById('main-rag').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMainRagData();
+    });
+
+    document.getElementById('chat-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+
+        if (message) {
+            appendMessage(message, true);
+            input.value = '';
+            input.style.height = 'auto';
+            sendButton.classList.remove('active');
+
+            $.ajax({
+                url: '{% url "assistant" %}',
+                method: 'POST',
+                data: {
+                    query: message,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    appendMessage(response.message, false);
+                },
+                error: function(error) {
+                    appendMessage("Sorry, there was an error processing your request.", false);
+                }
+            });
+        }
+    });
+
+    // Enter key handling
+    textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (this.value.trim()) {
+                document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+            }
+        }
+    });
+</script>
+{% endblock %}

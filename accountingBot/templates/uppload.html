@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+    <style>
+        :root {
+            --primary-gradient-1: #FF3366;  /* Vibrant Pink */
+            --primary-gradient-2: #FF6B6B;  /* Coral */
+            --accent-color: #FF3366;
+            --hover-color: #ff4d7d;
+            --bg-color: #ffffff;
+            --card-bg: #f8f9fd;
+            --text-primary: #2D3748;
+            --text-secondary: #4A5568;
+            --border-color: #E2E8F0;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(255, 51, 102, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(255, 107, 107, 0.04) 0%, transparent 40%);
+        }
+
+        .upload-card {
+            background: var(--bg-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            max-width: 600px;
+            width: 90%;
+            margin: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .upload-container {
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-container:hover {
+            border-color: var(--accent-color);
+            background: rgba(255, 51, 102, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-container i {
+            font-size: 2.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .upload-container:hover i {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .custom-input-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .custom-input-group input {
+            height: 3.5rem;
+            border-radius: 12px;
+            padding: 0 1.5rem;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .custom-input-group input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(255, 51, 102, 0.1);
+            outline: none;
+        }
+
+        .custom-input-group button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            border-radius: 10px;
+            padding: 0 1.5rem;
+            background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+            border: none;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.2);
+        }
+
+        .custom-input-group button:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.3);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-secondary);
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .upload-container.dragover {
+            animation: pulse 1s infinite;
+            border-color: var(--accent-color);
+            background: rgba(255, 51, 102, 0.05);
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.1);
+        }
+
+        @media (max-width: 576px) {
+            .upload-card {
+                padding: 1.5rem;
+            }
+
+            .custom-input-group input {
+                height: 3rem;
+                font-size: 0.9rem;
+            }
+
+            .custom-input-group button {
+                padding: 0 1rem;
+                font-size: 0.9rem;
+            }
+
+            .upload-container {
+                height: 140px;
+            }
+
+            .upload-container i {
+                font-size: 2rem;
+            }
+        }
+        /* Header Styles */
+.header {
+    background: #ffffff;
+    padding: 0.75rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
+/* Footer */
+.footer {
+    background: #ffffff;
+    padding: 0.75rem 0;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.footer-text {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin: 0;
+}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Header -->
+<header class="header">
+    <div class="header-content">
+        <h1 class="header-title">AccountingBot</h1>
+    </div>
+</header>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="upload-card">
+            <h4 class="text-center mb-4">Upload Your Media</h4>
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="custom-input-group">
+                    <input type="text" name="url" class="form-control" placeholder="Enter Links To scrap" required>
+                    <button type="submit">Fetch</button>
+                </div>
+
+                <div class="divider">
+                    <span>or</span>
+                </div>
+
+                <div class="upload-container" id="dropZone" onclick="document.getElementById('file-upload').click();">
+                    <div class="text-center">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop your files here or click to browse</p>
+                    </div>
+                </div>
+
+                <!-- Updated to accept multiple files -->
+                <input type="file" id="file-upload" name="file" accept=".doc, .docx, .txt, .pdf" multiple class="d-none" onchange="handleFileSelect(this)">
+
+                <div class="file-types text-center">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Accepted formats: DOC, DOCX, TXT, PDF
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Footer -->
+<footer class="footer">
+    <p class="footer-text">© 2024 AccountingBot. All rights reserved.</p>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // Drag and drop functionality
+        const dropZone = document.getElementById('dropZone');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('dragover');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            const fileInput = document.getElementById('file-upload');
+            // Create a DataTransfer object to hold the files
+            const dataTransfer = new DataTransfer();
+            for (let i = 0; i < files.length; i++) {
+                dataTransfer.items.add(files[i]);
+            }
+            // Set the files of the input to the DataTransfer object
+            fileInput.files = dataTransfer.files;
+            fileInput.form.submit();
+        }
+
+        function handleFileSelect(input) {
+            if (input.files.length > 0) {
+                input.form.submit();
+            }
+        }
+    </script>
+{% endblock %}

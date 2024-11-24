@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduAI{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.tutorialjinni.com/font-awesome/6.6.0/css/all.min.css">
+{#    <link rel="stylesheet" href="{% static 'css/style.css' %}">#}
+</head>
+<style>
+:root {
+    --primary-gradient-1: #FF3366;  /* Vibrant Pink */
+    --primary-gradient-2: #FF6B6B;  /* Coral */
+    --accent-color: #FF3366;
+    --hover-color: #ff4d7d;
+    --bg-color: #ffffff;
+    --card-bg: #f8f9fd;
+    --text-primary: #2D3748;
+    --text-secondary: #4A5568;
+    --border-color: #E2E8F0;
+}
+.chat-container {
+            height: calc(100vh - 60px);
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+}
+
+.initial-state {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+        padding: 0 20px;
+        margin-top: -49px;
+    }
+
+    .initial-state h2 {
+        color: #2d3748;
+        margin-bottom: 1px;
+        font-weight: 600;
+    }
+
+    .initial-state .chat-input-wrapper {
+        background: transparent;
+        border: none;
+        width: 100%;
+        max-width: 600px;
+        position: static;
+        margin-top: 1rem;
+    }
+
+    .chat-messages {
+        scroll-behavior: smooth;
+        overflow-y: auto;
+        flex-grow: 1;
+        padding: 1.5rem;
+        background: #f8f9fa;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+        background: rgba(245, 80, 54, 0.5);
+        border-radius: 10px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb:hover {
+        background: rgba(245, 80, 54, 0.8);
+    }
+
+    .messages-hidden {
+        display: none;
+    }
+
+    .message {
+        margin-bottom: 1.5rem;
+        max-width: 80%;
+        clear: both;
+        position: relative;
+        padding-bottom: 2rem;
+    }
+
+    .message-content {
+        padding: 1rem 1.25rem;
+        border-radius: 1.2rem;
+        position: relative;
+        word-wrap: break-word;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .user-message {
+        float: right;
+    }
+
+    .user-message .message-content {
+        background-color: rgba(255, 51, 102, 100%);
+        color: white;
+        border-bottom-right-radius: 0.3rem;
+    }
+
+    .bot-message {
+        float: left;
+        padding-left: 40px;
+    }
+
+    .bot-message .message-content {
+        background-color: white;
+        color: #2d3748;
+        border-bottom-left-radius: 0.3rem;
+    }
+
+    .copy-button {
+        position: absolute;
+        bottom: -27px;
+        left: -1px;
+        background: transparent;
+        border: none;
+        padding: 5px;
+        display: none;
+        cursor: pointer;
+        color: #6B7280;
+        transition: all 0.2s;
+    }
+
+    .message:hover .copy-button {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .copy-button:hover {
+        transform: scale(1.1);
+        color:rgba(255, 51, 102, 100%);
+    }
+
+    .bot-icon {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 35px;
+        height: 35px;
+        background-color: rgba(255, 51, 102, 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .bot-icon.loading {
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+  .chat-input-wrapper {
+    position: sticky;
+    bottom: 0;
+    padding: 0.75rem 1rem;
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    margin-top: auto;
+}
+
+.chat-input {
+    width: 100%;
+    min-height: 48px;
+    max-height: 200px;
+    padding: 0.875rem 3rem 0.875rem 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 1.5rem;
+    background-color: var(--bg-color);
+    resize: none;
+    transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(255, 51, 102, 0.1);
+}
+
+    .send-button {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 0.9rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 1;
+    margin-bottom: 13px;
+
+}
+
+.send-button.active {
+    opacity: 1;
+    transform: translateX(-5px);
+    box-shadow: 0 4px 15px rgba(255, 51, 102, 0.2);
+}
+
+    .send-button:hover {
+        background-color: #f77c5c;
+        transform: translateX(-5px);
+    }
+
+    @keyframes typing {
+        0%, 100% { content: ''; }
+        25% { content: '.'; }
+        50% { content: '..'; }
+        75% { content: '...'; }
+    }
+
+    .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 280px;
+    background: #ffffff;
+    padding: 20px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: scroll;
+
+}
+
+    .sidebar.collapsed {
+        transform: translateX(-280px);
+    }
+
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #f1f1f1;
+    }
+
+    .sidebar-header h4 {
+        margin: 0;
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 1.5rem;
+        padding-left: 12px;
+        text-align: left;
+    }
+
+    .new-chat-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+         background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        width: 100%;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(245, 80, 54, 0.1);
+    }
+
+    .new-chat-btn:hover {
+        background-color: #f77c5c;
+
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(255, 51, 102, 0.2);
+    }
+
+    .new-chat-btn i {
+        margin-right: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    .new-chat-btn:hover i {
+        transform: rotate(15deg);
+    }
+
+    .chat-history {
+        margin-top: 20px;
+    }
+
+
+
+
+    .main-content {
+        margin-left: 280px;
+        padding: 20px;
+        transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        min-height: 100vh;
+        background-color: #f8f9fa;
+    }
+
+    .main-content.expanded {
+        margin-left: 0;
+    }
+
+    .toggle-btn {
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        z-index: 1001;
+        background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px rgba(245, 80, 54, 0.2);
+    }
+
+    .toggle-btn:hover {
+        background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(255, 51, 102, 0.2);
+    }
+
+    .toggle-btn.shifted {
+        left: 300px;
+        border-radius: 50%;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .main-content {
+            margin-left: 0;
+            padding: 20px;
+        }
+
+        .toggle-btn.shifted {
+            left: 20px;
+        }
+    }
+{#    tooltip functionality #}
+/* Update chat item styles to establish proper stacking context */
+.chat-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 11px 16px;
+    margin-bottom: 8px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+}
+
+.chat-item:hover {
+    background-color: rgba(255, 51, 102, 0.04);
+    box-shadow: 0 4px 8px rgba(255, 51, 102, 0.1);
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.chat-item i.fa-comments {
+    margin-right: 12px;
+    color: rgba(255, 51, 102, 100%);
+}
+
+.chat-item span {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #374151;
+}
+
+/* Update options container to properly position the tooltip */
+.options-container {
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 2;
+}
+
+.chat-item:hover .options-container {
+    opacity: 1;
+}
+
+.options-btn {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.options-btn:hover {
+    color: #374151;
+}
+
+/* Ensure tooltip appears above all other elements */
+.options-tooltip {
+    position: absolute;
+    right: 50%;
+    top: calc(100% + 5px);
+    width: 200px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    z-index: 9999;
+    display: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transform-origin: top right;
+    
+}
+
+.options-tooltip button {
+    position: relative;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #374151;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+.options-tooltip button:hover {
+    background-color: rgba(255, 51, 102, 0.04);
+}
+
+.options-tooltip button i {
+    margin-right: 8px;
+    width: 16px;
+}
+
+.options-tooltip.show {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* Ensure options container is visible when chat item is hovered */
+.chat-item:hover .options-container {
+    opacity: 1;
+}
+
+/* Add overlay when tooltip is shown */
+.options-tooltip.show {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.chat-history {
+    position: relative;
+    z-index: 1;
+}
+
+</style>
+<body>
+
+    <!-- Sidebar Toggle Button -->
+    <button class="toggle-btn shifted" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4>AccountingBot</h4>
+        </div>
+
+        <form action="{% url 'new_session' %}" method="post">
+        {% csrf_token %}
+        <!-- New Chat Button -->
+        <button class="new-chat-btn" type="submit" onclick="startNewChat()">
+            <i class="fas fa-plus"></i>
+            New Chat
+        </button>
+        </form>
+
+     
+        
+       <div class="chat-history">
+    {% for chat in sidebar_chats %}
+        <div class="chat-item" data-session-id="{{ chat.session_id }}">
+            <i class="fas fa-comments"></i>
+            <span>{{ chat.message_title }}</span>
+            <div class="options-container">
+                <button class="options-btn">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div class="options-tooltip">
+                    <button class="rename-chat">
+                        <i class="fas fa-edit"></i>
+                        Rename
+                    </button>
+                    <button class="delete-chat">
+                        <i class="fas fa-trash"></i>
+                        Delete
+                    </button>
+                    <button class="export-chat">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+    </div>
+
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <div class="row g-3 mt-2">
+                <!-- Chat Container -->
+                <div class="col-lg-12">
+                    <div class="d-flex flex-column chat-container">
+                        <!-- Initial centered state -->
+                        <div class="initial-state" id="initialState" {% if session_id %}style="display: none;"{% endif %}>
+                            <h2>How can I help you today?</h2>
+                            <div class="chat-input-wrapper">
+                                <div class="chat-input-container">
+                                    <form method="post" action="" id="chat-form-initial">
+                                        {% csrf_token %}
+                                        <textarea
+                                            id="chat-input-initial"
+                                            name="query"
+                                            class="chat-input"
+                                            placeholder="Type your message here..."
+                                            rows="1"
+                                        ></textarea>
+                                        <button id="send-button-initial" type="submit" class="send-button">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Regular chat interface (initially hidden) -->
+                        <div id="chat-messages" class="chat-messages messages-hidden">
+                            <!-- Messages will be added here -->
+                        </div>
+                        <div class="chat-input-wrapper messages-hidden" id="regularChatInput">
+                            <div class="chat-input-container">
+                                <form method="post" action="" id="chat-form">
+                                    {% csrf_token %}
+                                    <textarea
+                                        id="chat-input"
+                                        name="query"
+                                        class="chat-input"
+                                        placeholder="Message ChatBot..."
+                                        rows="1"
+                                    ></textarea>
+                                    <button id="send-button" type="submit" class="send-button">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    
+  const textarea = document.querySelector('.chat-input');
+  const initialHeight = '48px';
+
+  function resetTextarea() {
+    textarea.style.height = initialHeight;
+    textarea.value = '';
+  }
+
+  textarea.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+  });
+
+  // Handle Enter key
+  textarea.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (this.value.trim().length > 0) {
+        $('#chat-form').submit();
+      }
+    }
+  });
+
+  const sendButton = document.getElementById('send-button');
+  const chatInput = document.getElementById('chat-input');
+
+  chatInput.addEventListener('input', function () {
+    if (chatInput.value.trim().length > 0) {
+      sendButton.classList.add('active');
+    } else {
+      sendButton.classList.remove('active');
+    }
+  });
+
+
+function appendMessage(content, isUser) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'} clearfix`;
+
+    if (!isUser) {
+        const botIcon = document.createElement('div');
+        botIcon.className = 'bot-icon';
+        botIcon.innerHTML = '<i class="fas fa-robot"></i>';
+        messageDiv.appendChild(botIcon);
+    }
+
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+
+    // Add copy button for both user and bot messages
+    const copyButton = document.createElement('button');
+    copyButton.className = 'copy-button';
+    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+    copyButton.onclick = function() {
+        navigator.clipboard.writeText(content).then(() => {
+            copyButton.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+            }, 2000);
+        });
+    };
+
+    // Format the content using the provided style logic
+    const formattedHtml = formatMessageContent(content); // Call the new formatting logic
+    messageContent.innerHTML = formattedHtml;
+
+    // Append the copy button at the end
+    messageContent.appendChild(copyButton);
+    messageDiv.appendChild(messageContent);
+
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.appendChild(messageDiv);
+
+    // Auto-scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Helper function to format message content
+function formatMessageContent(content) {
+    // The provided formatting logic
+    content = content.replace(/```([\s\S]*?)```/g, (match, code) => {
+        return `<pre class="code-block"><code>${escapeHtml(code.trim())}</code></pre>`;
+    });
+
+    content = content.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+
+    const blocks = content.split('\n\n');
+    let formattedHtml = '';
+
+    for (const block of blocks) {
+        const trimmedBlock = block.trim();
+        if (!trimmedBlock) continue;
+
+        if (trimmedBlock.startsWith('#')) {
+            const level = trimmedBlock.match(/^#+/)[0].length;
+            const headingText = trimmedBlock.replace(/^#+\s*/, '');
+            formattedHtml += `<h${level} class="message-heading">${formatInlineStyles(headingText)}</h${level}>`;
+            continue;
+        }
+
+        if (trimmedBlock.match(/^[*-]\s/m)) {
+            const items = trimmedBlock.split('\n').filter(item => item.trim());
+            formattedHtml += '<ul class="message-list">';
+            for (const item of items) {
+                const listItem = item.replace(/^[*-]\s+/, '');
+                formattedHtml += `<li>${formatInlineStyles(listItem)}</li>`;
+            }
+            formattedHtml += '</ul>';
+            continue;
+        }
+
+        if (trimmedBlock.match(/^\d+\.\s/m)) {
+            const items = trimmedBlock.split('\n').filter(item => item.trim());
+            formattedHtml += '<ol class="message-list">';
+            for (const item of items) {
+                const listItem = item.replace(/^\d+\.\s+/, '');
+                formattedHtml += `<li>${formatInlineStyles(listItem)}</li>`;
+            }
+            formattedHtml += '</ol>';
+            continue;
+        }
+
+        formattedHtml += `<p class="message-paragraph">${formatInlineStyles(trimmedBlock)}</p>`;
+    }
+
+    return formattedHtml;
+}
+
+// Inline text formatting helper
+function formatInlineStyles(text) {
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
+    text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    return text;
+}
+
+// Escape HTML helper
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Add event listener for Enter key on both input fields
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = ['chat-input', 'chat-input-initial'];
+
+    inputs.forEach(inputId => {
+        const textarea = document.getElementById(inputId);
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (this.value.trim().length > 0) {
+                    const form = this.closest('form');
+                    form.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+    });
+});
+
+
+
+// Ensure scrolling on overflow
+const chatMessages = document.getElementById('chat-messages');
+const observer = new MutationObserver(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+});
+
+observer.observe(chatMessages, {
+    childList: true,
+    subtree: true
+});
+ function switchToRegularChat() {
+  document.getElementById('initialState').style.display = 'none';
+  document.getElementById('chat-messages').classList.remove('messages-hidden');
+  document.getElementById('regularChatInput').classList.remove('messages-hidden');
+}
+
+  function showLoadingIndicator() {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message bot-message clearfix';
+    messageDiv.id = 'loadingMessage';
+
+    const botIcon = document.createElement('div');
+    botIcon.className = 'bot-icon loading';
+    botIcon.innerHTML = '<i class="fas fa-robot"></i>';
+
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+    messageContent.textContent = 'Thinking...';
+
+    messageDiv.appendChild(botIcon);
+    messageDiv.appendChild(messageContent);
+    document.getElementById('chat-messages').appendChild(messageDiv);
+
+    // Scroll to bottom
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function removeLoadingIndicator() {
+    const loadingMessage = document.getElementById('loadingMessage');
+    if (loadingMessage) {
+      loadingMessage.remove();
+    }
+  }
+
+$(document).ready(function() {
+    // Variable to hold session_id, which may change when switching chats
+    let session_id = '{{ session_id|default_if_none:"" }}';
+
+    // Check for session ID in URL on page load
+    const urlSessionId = getSessionIdFromUrl();
+    let currentSessionId = urlSessionId;
+
+    if (urlSessionId) {
+        loadChatHistory(urlSessionId);
+    }
+
+    function handleSubmit(event, formId) {
+    event.preventDefault();
+
+    const isInitialForm = formId === 'chat-form-initial';
+    const inputId = isInitialForm ? 'chat-input-initial' : 'chat-input';
+    const userQuery = $(`#${inputId}`).val().trim();
+
+    if (userQuery.length === 0) {
+        return;
+    }
+
+    if (isInitialForm) {
+        switchToRegularChat();
+    }
+
+    // Display user message and clear input
+    appendMessage(userQuery, true);
+    $(`#${inputId}`).val('');
+    showLoadingIndicator();
+
+    // Get the current session_id from URL if it exists
+    const currentSessionId = getSessionIdFromUrl();
+    
+    // Determine URL based on current session
+    let url = currentSessionId ? `/chat/${currentSessionId}/` : `{% url "index" %}`;
+
+    // Send AJAX request for chat submission
+    $.ajax({
+        url: url,
+        method: 'POST',
+        data: {
+            'query': userQuery,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            removeLoadingIndicator();
+
+            // Only create new chat item if this is a new session
+            if (response.new_session_id && !currentSessionId) {
+                // Create and add new chat item with proper event listeners
+                const newChatItem = createChatItem(response.new_session_id, userQuery);
+                $('.chat-history').prepend(newChatItem);
+
+                // Update URL to reflect the new session
+                const newUrl = `${window.location.origin}/chat/${response.new_session_id}/`;
+                history.pushState(null, null, newUrl);
+            }
+
+            // Display bot response
+            appendMessage(response.message, false);
+        },
+        error: function(error) {
+            removeLoadingIndicator();
+            console.error("Error:", error);
+            appendMessage("Sorry, there was an error processing your request.", false);
+        }
+    });
+}
+
+function fetchChatHistory(sessionId) {
+    if (!sessionId) return;
+
+    // Update URL first
+    const newUrl = `${window.location.origin}/chat/${sessionId}/`;
+    history.pushState(null, null, newUrl);
+
+    $.ajax({
+        url: `/chat/${sessionId}/history/`,
+        method: 'GET',
+        success: function(response) {
+            // Clear existing chat messages
+            $('#chat-messages').html('');
+
+            // Switch to the regular chat interface
+            switchToRegularChat();
+
+            // Append retrieved chat messages
+            response.forEach(message => {
+                appendMessage(message.message_user, true);
+                appendMessage(message.message_bot, false);
+            });
+        },
+        error: function(error) {
+            console.error("Error:", error);
+            appendMessage("Sorry, there was an error fetching the chat history.", false);
+        }
+    });
+}
+
+function getSessionIdFromUrl() {
+    const urlParts = window.location.pathname.split('/');
+    return urlParts[2] || '';  // Assuming URL structure /chat/{session_id}/
+}
+
+    $('#chat-form').on('submit', function(event) {
+        handleSubmit(event, 'chat-form');
+    });
+
+    $('#chat-form-initial').on('submit', function(event) {
+        handleSubmit(event, 'chat-form-initial');
+    });
+    });
+$(document).ready(function() {
+    // Sidebar toggle functionality
+    $('#sidebarToggle').on('click', function() {
+        $('#sidebar').toggleClass('collapsed');
+        $('#mainContent').toggleClass('expanded');
+        $(this).toggleClass('shifted');
+    });
+});
+
+// Add this event listener to the chat-item elements
+$('.chat-item').on('click', function() {
+    const sessionId = $(this).data('session-id');
+    console.log(sessionId)
+    fetchChatHistory(sessionId);
+});
+
+
+function fetchChatHistory(sessionId) {
+        session_id = sessionId;  // Update the current session_id to the selected chat
+
+        $.ajax({
+            url: `/chat/${session_id}/history/`,
+            method: 'GET',
+            success: function(response) {
+                // Clear existing chat messages
+                $('#chat-messages').html('');
+
+                // Switch to the regular chat interface
+                switchToRegularChat();
+
+                // Append retrieved chat messages
+                response.forEach(message => {
+
+                    appendMessage(message.message_user, true);
+                    appendMessage(message.message_bot, false);
+                });
+
+                // Update the URL to reflect the selected session
+                const newUrl = `${window.location.origin}/chat/${session_id}/`;
+                history.replaceState(null, null, newUrl);
+            },
+            error: function(error) {
+                console.error("Error:", error);
+                appendMessage("Sorry, there was an error fetching the chat history.", false);
+            }
+        });
+    }
+
+    // Event listener for chat history items
+    $('.chat-item').on('click', function() {
+        const selectedSessionId = $(this).data('session-id');
+        fetchChatHistory(selectedSessionId);
+    });
+// Function to handle starting a new chat
+// Start a new chat session with error handling
+    function startNewChat(event) {
+      event.preventDefault();
+      $.ajax({
+        url: '{% url "new_session" %}',
+        method: 'POST',
+        data: {
+          'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+
+      });
+    }
+
+// Function to load chat history
+function loadChatHistory(sessionId) {
+    if (!sessionId) return;
+
+    $.ajax({
+        url: `/chat/${sessionId}/history/`,
+        method: 'GET',
+        success: function(response) {
+            // Clear existing messages
+            $('#chat-messages').html('');
+
+            // Switch to regular chat interface
+            switchToRegularChat();
+
+            // Display each message pair
+            response.forEach(message => {
+                appendMessage(message.message_user, true);
+                appendMessage(message.message_bot, false);
+            });
+        },
+        error: function(error) {
+            console.error("Error loading chat history:", error);
+            appendMessage("Sorry, there was an error loading the chat history.", false);
+        }
+    });
+}
+document.addEventListener("DOMContentLoaded", function () {
+    // Typing Effect for Initial State Text
+    const textElement = document.querySelector(".initial-state h2");
+    const text = "How can I help you today?";
+    let index = 0;
+
+    function type() {
+        if (index < text.length) {
+            textElement.textContent += text.charAt(index);
+            index++;
+            setTimeout(type, 30); // Adjust typing speed here
+        }
+    }
+
+    // Clear the initial text and start the typing effect
+    textElement.textContent = "";
+    type();
+});
+// Add this to your existing JavaScript section
+document.addEventListener('DOMContentLoaded', function() {
+    // Close tooltips when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.options-container')) {
+            document.querySelectorAll('.options-tooltip').forEach(tooltip => {
+                tooltip.classList.remove('show');
+            });
+        }
+    });
+
+    // Handle options button clicks
+    document.querySelectorAll('.options-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const tooltip = this.nextElementSibling;
+
+            // Close other tooltips
+            document.querySelectorAll('.options-tooltip').forEach(t => {
+                if (t !== tooltip) {
+                    t.classList.remove('show');
+                }
+            });
+
+            // Toggle current tooltip
+            tooltip.classList.toggle('show');
+        });
+    });
+
+    // Prevent chat item click when clicking tooltip options
+    document.querySelectorAll('.options-tooltip button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+
+    
+
+    
+
+    // Handle export action
+    document.querySelectorAll('.export-chat').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const chatItem = this.closest('.chat-item');
+            const sessionId = chatItem.dataset.sessionId;
+
+            // Add your export API call here
+            console.log('Export chat:', sessionId);
+            alert('Exporting chat...');
+        });
+    });
+});
+
+
+
+function deleteChat(sessionId) {
+    const chatItem = $(`[data-session-id="${sessionId}"]`);
+    $.ajax({
+        url: `/chat/${sessionId}/delete/`,
+        method: 'GET',
+        success: function(response) {
+            if (response.message === 'success') {
+                chatItem.remove();
+                startNewChat();
+            }
+        },
+        error: function(error) {
+            console.error(`Error deleting chat: ${error.responseText}`);
+        }
+    });
+}
+
+
+$('.delete-chat').on('click', function() {
+    const sessionId = $(this).closest('.chat-item').data('session-id');
+    deleteChat(sessionId);
+});
+// Add this to your existing JavaScript code
+
+function makeEditable(element, sessionId) {
+    // Create an input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = element.textContent.trim();
+    input.className = 'edit-title-input';
+    
+    // Style the input to match the existing text
+    input.style.cssText = `
+        border: none;
+        background: transparent;
+        width: 100%;
+        outline: none;
+        padding: 0;
+        margin: 0;
+        font-size: inherit;
+        font-family: inherit;
+        color: inherit;
+        border: 1px solid black;
+    `;
+
+    // Replace the span with input
+    element.replaceWith(input);
+    input.focus();
+    input.select();
+
+    // Handle save on enter or blur
+    function saveChange() {
+        const newTitle = input.value.trim();
+        if (newTitle && newTitle !== element.textContent) {
+            $.ajax({
+                url: `/chat/${sessionId}/rename/`,
+                method: 'POST',
+                data: {
+                    'title': newTitle,
+                    'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                success: function(response) {
+                    if (response.message === 'success') {
+                        element.textContent = newTitle;
+                    }
+                },
+                error: function(error) {
+                    console.error(`Error renaming chat: ${error.responseText}`);
+                }
+            });
+        }
+        input.replaceWith(element);
+    }
+
+    // Event listeners for input
+    input.addEventListener('blur', saveChange);
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveChange();
+        }
+        if (e.key === 'Escape') {
+            input.replaceWith(element);
+        }
+    });
+}
+
+// Update the click handler for chat items
+document.addEventListener('DOMContentLoaded', function() {
+    // Update the rename button click handler
+    document.querySelectorAll('.rename-chat').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const chatItem = this.closest('.chat-item');
+            const titleSpan = chatItem.querySelector('span');
+            const sessionId = chatItem.dataset.sessionId;
+            makeEditable(titleSpan, sessionId);
+            
+            // Close the tooltip
+            const tooltip = this.closest('.options-tooltip');
+            if (tooltip) {
+                tooltip.classList.remove('show');
+            }
+        });
+    });
+});
+
+// Add necessary CSS
+const style = document.createElement('style');
+style.textContent = `
+    .edit-title-input:focus {
+        box-shadow: 0 1px 2px rgba(245, 80, 54, 0.1);
+    }
+    
+    .chat-item span {
+        transition: all 0.2s ease;
+    }
+    
+    .chat-item:hover span {
+        color: black;
+    }
+`;
+document.head.appendChild(style);
+
+function createChatItem(sessionId, title) {
+    const chatItem = document.createElement('div');
+    chatItem.className = 'chat-item';
+    chatItem.setAttribute('data-session-id', sessionId);
+    
+    chatItem.innerHTML = `
+        <i class="fas fa-comments"></i>
+        <span>${title}</span>
+        <div class="options-container">
+            <button class="options-btn">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <div class="options-tooltip">
+                <button class="rename-chat">
+                    <i class="fas fa-edit"></i>
+                    Rename
+                </button>
+                <button class="delete-chat">
+                    <i class="fas fa-trash"></i>
+                    Delete
+                </button>
+                <button class="export-chat">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Attach event listeners to the new chat item
+    attachChatItemEventListeners(chatItem);
+    
+    return chatItem;
+}
+
+function attachChatItemEventListeners(chatItem) {
+    // Options button click
+    const optionsBtn = chatItem.querySelector('.options-btn');
+    optionsBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const tooltip = this.nextElementSibling;
+        document.querySelectorAll('.options-tooltip').forEach(t => {
+            if (t !== tooltip) t.classList.remove('show');
+        });
+        tooltip.classList.toggle('show');
+    });
+
+    // Rename button
+    const renameBtn = chatItem.querySelector('.rename-chat');
+    renameBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const titleSpan = chatItem.querySelector('span');
+        const sessionId = chatItem.dataset.sessionId;
+        makeEditable(titleSpan, sessionId);
+        this.closest('.options-tooltip').classList.remove('show');
+    });
+
+    // Delete button
+    const deleteBtn = chatItem.querySelector('.delete-chat');
+    deleteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const sessionId = chatItem.dataset.sessionId;
+        deleteChat(sessionId);
+    });
+
+    // Export button
+    const exportBtn = chatItem.querySelector('.export-chat');
+    exportBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const sessionId = chatItem.dataset.sessionId;
+        console.log('Export chat:', sessionId);
+        alert('Exporting chat...');
+    });
+
+    // Chat item click
+    chatItem.addEventListener('click', function() {
+        const sessionId = this.dataset.sessionId;
+        fetchChatHistory(sessionId);
+    });
+}
+
+</script>
+
+</body>
+</html>
