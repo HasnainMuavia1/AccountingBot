@@ -539,34 +539,119 @@ body {
     });
 
     // Chat message handling
-    function appendMessage(content, isUser) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+function appendMessage(content, isUser) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
 
-        if (isUser) {
-            messageDiv.innerHTML = `
-                <div class="message-content">${content}</div>
-            `;
-        } else {
-            messageDiv.innerHTML = `
-                <div class="bot-icon">
-                    <i class="fas fa-robot" style="color: white;"></i>
+    // Format the message content using formatMessageContent
+    const formattedContent = formatMessageContent(content);
+
+    if (isUser) {
+        messageDiv.innerHTML = `
+            <div class="message-content">${formattedContent}</div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="bot-icon">
+                <i class="fas fa-robot" style="color: white;"></i>
+            </div>
+            <div class="message-container">
+                <div class="message-content">${formattedContent}</div>
+                <div class="message-actions">
+                    <button class="action-button copy-btn" onclick="copyToClipboard(this)" data-content="${content}">
+                        <i class="fas fa-copy"></i>
+                    </button>
                 </div>
-                <div class="message-container">
-                    <div class="message-content">${content}</div>
-                    <div class="message-actions">
-                        <button class="action-button copy-btn" onclick="copyToClipboard(this)" data-content="${content}">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
+            </div>
+        `;
+    }
+
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function formatMessageContent(content) {
+    // Code block formatting
+    content = content.replace(/```([\s\S]*?)```/g, (match, code) => {
+        return `<pre class="code-block"><code>${escapeHtml(code.trim())}</code></pre>`;
+    });
+
+    // Inline code formatting
+    content = content.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+
+    const blocks = content.split('\n\n');
+    let formattedHtml = '';
+
+    for (const block of blocks) {
+        const trimmedBlock = block.trim();
+        if (!trimmedBlock) continue;
+
+        // Handle numbered lists
+        if (/^\d+\.\s/m.test(trimmedBlock)) {
+            const items = trimmedBlock.split('\n').filter(item => item.trim());
+            formattedHtml += '<ol class="message-list">';
+            for (const item of items) {
+                const listItem = item.replace(/^\d+\.\s+/, '');
+                formattedHtml += `<li>${formatInlineStyles(listItem)}</li>`;
+            }
+            formattedHtml += '</ol>';
+            continue;
         }
 
-        const chatMessages = document.getElementById('chat-messages');
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Handle bullet lists
+        if (/^[*-]\s/m.test(trimmedBlock)) {
+            const items = trimmedBlock.split('\n').filter(item => item.trim());
+            formattedHtml += '<ul class="message-list">';
+            for (const item of items) {
+                const listItem = item.replace(/^[*-]\s+/, '');
+                formattedHtml += `<li>${formatInlineStyles(listItem)}</li>`;
+            }
+            formattedHtml += '</ul>';
+            continue;
+        }
+
+        // Handle headings
+        if (trimmedBlock.startsWith('#')) {
+            const level = trimmedBlock.match(/^#+/)[0].length;
+            const headingText = trimmedBlock.replace(/^#+\s*/, '');
+            formattedHtml += `<h${level} class="message-heading">${formatInlineStyles(headingText)}</h${level}>`;
+            continue;
+        }
+
+        // Add special formatting for highlights
+        if (/^(Insights|Recommendations|Recurring Question|Frequent Topic|Unanswered Questions|Repetitive Messages):/i.test(trimmedBlock)) {
+            formattedHtml += `<p class="message-paragraph special-highlight">${formatInlineStyles(trimmedBlock)}</p>`;
+            continue;
+        }
+
+        // Default paragraph formatting
+        formattedHtml += `<p class="message-paragraph">${formatInlineStyles(trimmedBlock)}</p>`;
     }
+
+    return formattedHtml;
+}
+
+// Inline text formatting helper
+function formatInlineStyles(text) {
+    // Bold
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Italic
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    // Strikethrough
+    text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
+    // Links
+    text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    return text;
+}
+
+// Escape HTML helper
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 
     // Copy to clipboard
     function copyToClipboard(button) {

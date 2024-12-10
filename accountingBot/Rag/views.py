@@ -23,13 +23,14 @@ from groq import Groq as Groq2
 GROQ_API_KEY = "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"
 client = Groq2(api_key=GROQ_API_KEY)
 # Initialize LLM and embedding model once
+
 Settings.llm = Groq(model="llama3-70b-8192", api_key=GROQ_API_KEY, temperature=0.5, max_tokens=2000)
 Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
 
 # Load documents and create index once
 documents = SimpleDirectoryReader("media/documents").load_data()
 index = VectorStoreIndex.from_documents(documents)
-query_engine = index.as_query_engine(top_k=1, response_mode="tree_summarize")
+query_engine = index.as_query_engine(top_k=1, response_mode="tree_summarize",straming=True)
 
 
 def generate_prompt(chat_query):
